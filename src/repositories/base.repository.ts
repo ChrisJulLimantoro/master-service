@@ -21,6 +21,7 @@ export class BaseRepository<T> {
 
   // Get all records with possible relations
   async findAll(): Promise<T[]> {
+    console.log(this.modelName, this.relations);
     return this.prisma[this.modelName].findMany({
       include: this.relations,
       where: this.isSoftDelete ? { deleted_at: null } : {},

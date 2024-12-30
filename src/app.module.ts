@@ -9,7 +9,13 @@ import { CompanyModule } from './company/company.module';
 import { StoreModule } from './store/store.module';
 
 @Module({
-  imports: [DiscoveryModule, ValidationModule.forRoot(), PrismaModule, CompanyModule, StoreModule],
+  imports: [
+    DiscoveryModule,
+    ValidationModule.forRoot(),
+    PrismaModule,
+    CompanyModule,
+    StoreModule,
+  ],
   controllers: [AppController],
   providers: [AppService, MessagePatternDiscoveryService],
 })

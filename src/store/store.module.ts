@@ -4,8 +4,10 @@ import { StoreService } from './store.service';
 import { StoreRepository } from 'src/repositories/store.repository';
 import { ValidationModule } from 'src/validation/validation.module';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SharedModule } from 'src/shared.module';
 
 @Module({
+  imports: [SharedModule],
   controllers: [StoreController],
   providers: [StoreService, StoreRepository, ValidationModule, PrismaService],
 })
