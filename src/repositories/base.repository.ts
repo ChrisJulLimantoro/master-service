@@ -19,19 +19,28 @@ export class BaseRepository<T> {
     });
   }
 
-  // Get all records with possible relations
-  async findAll(): Promise<T[]> {
-    console.log(this.modelName, this.relations);
+  // Get all records with possible relations and filter criteria
+  async findAll(filter?: Record<string, any>): Promise<T[]> {
+    const whereConditions: Record<string, any> = {
+      ...(this.isSoftDelete ? { deleted_at: null } : {}),
+      ...filter, // Add the provided filter conditions
+    };
+
     return this.prisma[this.modelName].findMany({
+      where: whereConditions, // Apply dynamic filter along with soft delete condition
       include: this.relations,
-      where: this.isSoftDelete ? { deleted_at: null } : {},
     });
   }
 
-  // Find a record by ID with possible relations
-  async findOne(id: string): Promise<T | null> {
+  // Find a record by ID with possible relations and filter criteria
+  async findOne(id: string, filter?: Record<string, any>): Promise<T | null> {
+    const whereConditions: Record<string, any> = {
+      ...(this.isSoftDelete ? { id, deleted_at: null } : { id }),
+      ...filter, // Add the provided filter conditions
+    };
+
     return this.prisma[this.modelName].findUnique({
-      where: this.isSoftDelete ? { id, deleted_at: null } : { id },
+      where: whereConditions, // Apply dynamic filter along with soft delete condition
       include: this.relations,
     });
   }

@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { CustomResponse } from './exception/dto/custom-response.dto';
 import { ValidationService } from './validation/validation.service';
 
@@ -30,8 +29,8 @@ export abstract class BaseService {
   }
 
   // Find all
-  async findAll(): Promise<CustomResponse> {
-    const data = await this.repository.findAll();
+  async findAll(filter: Record<string, any> = null): Promise<CustomResponse> {
+    const data = await this.repository.findAll(filter);
     return CustomResponse.success('Data Found!', data, 200);
   }
 
