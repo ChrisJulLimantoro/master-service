@@ -44,7 +44,12 @@ export class StoreController {
     const param = data.params;
     const body = data.body;
     body.owner_id = param.user.userId;
-    return this.service.update(param.id, body);
+
+    const response = await this.service.update(param.id, body);
+    if (response.success && (body.code || body.name)) {
+      this.authClient.emit({ cmd: 'store_updated' }, response.data);
+    }
+    return response;
   }
 
   @MessagePattern({ cmd: 'delete:store/*' })

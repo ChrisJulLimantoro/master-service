@@ -1,14 +1,17 @@
 import { z } from 'zod';
 export class UpdateCompanyRequest {
-  name: string;
+  code: string | null;
+  name: string | null;
 
-  constructor(data: { name: string }) {
+  constructor(data: { code: string | null; name: string | null }) {
+    this.code = data.code;
     this.name = data.name;
   }
 
   static schema() {
     return z.object({
-      name: z.string().min(5).max(255),
+      code: z.string().max(5).optional(),
+      name: z.string().min(5).max(255).optional(),
     });
   }
 }

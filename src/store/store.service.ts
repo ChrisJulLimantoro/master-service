@@ -4,6 +4,7 @@ import { StoreRepository } from 'src/repositories/store.repository';
 import { ValidationService } from 'src/validation/validation.service';
 import { CreateStoreRequest } from './dto/create-store.dto';
 import { UpdateStoreRequest } from './dto/update-store.dto';
+import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 
 @Injectable()
 export class StoreService extends BaseService {
@@ -16,5 +17,13 @@ export class StoreService extends BaseService {
     protected readonly validation: ValidationService,
   ) {
     super(validation);
+  }
+
+  protected transformCreateData(data: any) {
+    return new CreateStoreRequest(data);
+  }
+
+  protected transformUpdateData(data: any) {
+    return new UpdateStoreRequest(data);
   }
 }

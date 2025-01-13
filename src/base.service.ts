@@ -10,8 +10,17 @@ export abstract class BaseService {
 
   constructor(protected readonly validation: ValidationService) {}
 
+  protected transformCreateData(data: any): any {
+    return data; // Default implementation (no transformation)
+  }
+
+  protected transformUpdateData(data: any): any {
+    return data; // Default implementation (no transformation)
+  }
+
   // Create
   async create(data: any): Promise<CustomResponse> {
+    data = this.transformCreateData(data);
     const validatedData = this.validation.validate(data, this.createSchema);
     const newData = await this.repository.create(validatedData);
     if (!newData) {
@@ -37,6 +46,7 @@ export abstract class BaseService {
 
   // Update
   async update(id: string, data: any): Promise<CustomResponse> {
+    data = this.transformUpdateData(data);
     const oldData = await this.repository.findOne(id);
     if (!oldData) {
       return CustomResponse.error('Data not found', null, 404);

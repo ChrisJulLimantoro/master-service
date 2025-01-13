@@ -30,12 +30,18 @@ model Company {
 }
 
 model Store {
-  id      String         @id @db.Uuid @default(uuid())
-  code    String
-  name    String
-  company_id String @db.Uuid
-  npwp String
+  id          String         @id @db.Uuid @default(uuid())
+  code        String
+  name        String
+  npwp        String
+  open_date   DateTime          @db.Date
+  address     String            @db.Text
+  longitude   Decimal           @db.Decimal(65, 20)
+  latitude    Decimal           @db.Decimal(65, 20)
+  information String?            @db.Text
+  is_active   Boolean           @default(true)
 
+  company_id String @db.Uuid
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
