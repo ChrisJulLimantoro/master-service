@@ -17,4 +17,12 @@ export class EmployeeService extends BaseService {
   ) {
     super(validation);
   }
+
+  protected transformCreateData(data: any) {
+    return new CreateEmployeeRequest(data);
+  }
+
+  protected transformUpdateData(data: any) {
+    return new UpdateEmployeeRequest(data);
+  }
 }

@@ -17,4 +17,12 @@ export class CompanyService extends BaseService {
   ) {
     super(validation);
   }
+
+  protected transformCreateData(data: any) {
+    return new CreateCompanyRequest(data);
+  }
+
+  protected transformUpdateData(data: any) {
+    return new UpdateCompanyRequest(data);
+  }
 }

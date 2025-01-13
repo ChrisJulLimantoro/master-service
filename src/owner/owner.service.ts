@@ -17,4 +17,12 @@ export class OwnerService extends BaseService {
   ) {
     super(validation);
   }
+
+  protected transformCreateData(data: any) {
+    return new CreateOwnerRequest(data);
+  }
+
+  protected transformUpdateData(data: any) {
+    return new UpdateOwnerRequest(data);
+  }
 }
