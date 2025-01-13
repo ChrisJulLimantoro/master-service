@@ -7,6 +7,7 @@ export class CompanyRepository extends BaseRepository<any> {
   constructor(prisma: PrismaService) {
     const relations = {
       stores: true,
+      owner: true,
     };
     super(prisma, 'company', relations, true); // 'role' is the Prisma model name
   }

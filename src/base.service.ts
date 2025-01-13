@@ -14,6 +14,9 @@ export abstract class BaseService {
   async create(data: any): Promise<CustomResponse> {
     const validatedData = this.validation.validate(data, this.createSchema);
     const newData = await this.repository.create(validatedData);
+    if (!newData) {
+      return CustomResponse.error('Failed to create new data', null, 500);
+    }
     return CustomResponse.success('New Data Created!', newData, 201);
   }
 

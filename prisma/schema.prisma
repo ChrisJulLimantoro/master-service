@@ -15,6 +15,7 @@ datasource db {
 
 model Company {
   id       String         @id @db.Uuid @default(uuid())
+  code     String
   name     String
   owner_id String @db.Uuid
 
@@ -22,6 +23,7 @@ model Company {
   updated_at DateTime @updatedAt
   deleted_at DateTime?
 
+  owner Owner @relation(fields: [owner_id], references: [id])
   stores Store[]
   @@unique([name, owner_id])
   @@map("companies")
@@ -29,8 +31,11 @@ model Company {
 
 model Store {
   id      String         @id @db.Uuid @default(uuid())
-  name     String
+  code    String
+  name    String
   company_id String @db.Uuid
+  npwp String
+
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -40,4 +45,37 @@ model Store {
 
   @@unique([name, company_id])
   @@map("stores")
+}
+
+model Owner {
+  id      String         @id @db.Uuid @default(uuid())
+  name     String
+  email    String
+  password String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
+
+  companies Company[]
+  employees Employee[]
+  @@unique([email])
+  @@map("owners")
+}
+
+model Employee {
+  id      String         @id @db.Uuid @default(uuid())
+  name     String
+  email    String
+  password String
+  owner_id String @db.Uuid
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
+
+  owner Owner @relation(fields: [owner_id], references: [id])
+
+  @@unique([email])
+  @@map("employees")
 }

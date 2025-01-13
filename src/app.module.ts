@@ -7,6 +7,8 @@ import { ValidationModule } from './validation/validation.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CompanyModule } from './company/company.module';
 import { StoreModule } from './store/store.module';
+import { OwnerModule } from './owner/owner.module';
+import { EmployeeModule } from './employee/employee.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { StoreModule } from './store/store.module';
     PrismaModule,
     CompanyModule,
     StoreModule,
+    OwnerModule,
+    EmployeeModule,
   ],
   controllers: [AppController],
   providers: [AppService, MessagePatternDiscoveryService],
