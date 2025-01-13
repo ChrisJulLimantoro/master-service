@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MessagePatternDiscoveryService } from './discovery/message-pattern-discovery.service';
 import { DiscoveryModule } from '@nestjs/core';
 import { ValidationModule } from './validation/validation.module';
@@ -21,6 +20,6 @@ import { EmployeeModule } from './employee/employee.module';
     EmployeeModule,
   ],
   controllers: [AppController],
-  providers: [AppService, MessagePatternDiscoveryService],
+  providers: [MessagePatternDiscoveryService],
 })
 export class AppModule {}

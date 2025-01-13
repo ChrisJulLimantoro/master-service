@@ -46,8 +46,10 @@ export class StoreController {
     body.owner_id = param.user.userId;
 
     const response = await this.service.update(param.id, body);
-    if (response.success && (body.code || body.name)) {
-      this.authClient.emit({ cmd: 'store_updated' }, response.data);
+    if (response.success) {
+      if (body.code || body.name) {
+        this.authClient.emit({ cmd: 'store_code_updated' }, response.data);
+      }
     }
     return response;
   }
