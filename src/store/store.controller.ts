@@ -9,6 +9,7 @@ export class StoreController {
   constructor(
     private readonly service: StoreService,
     @Inject('AUTH') private readonly authClient: ClientProxy,
+    @Inject('MARKETPLACE') private readonly marketplaceClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:store' })
@@ -34,6 +35,13 @@ export class StoreController {
     if (response.success) {
       // broadcast to other services via RMQ
       this.authClient.emit({ cmd: 'store_created' }, response.data);
+      try {
+        console.log('Notifying marketplace...');
+        await this.service.notifyMarketplace(response.data);
+        console.log('Marketplace notified successfully.');
+      } catch (error) {
+        console.error('Error notifying marketplace:', error.message);
+      }
     }
     return response;
   }
@@ -44,11 +52,22 @@ export class StoreController {
     const param = data.params;
     const body = data.body;
     body.owner_id = param.user.userId;
-
+    const isOnlyNpwpAndOpenDateUpdated = Object.keys(body).every((key) =>
+      ['npwp', 'open_date'].includes(key),
+    );
     const response = await this.service.update(param.id, body);
     if (response.success) {
       if (body.code || body.name) {
         this.authClient.emit({ cmd: 'store_code_updated' }, response.data);
+        if (!isOnlyNpwpAndOpenDateUpdated) {
+          try {
+            console.log('Notifying marketplace...');
+            await this.service.notifyMarketplaceUpdate(param.id, response.data);
+            console.log('Marketplace notified successfully.');
+          } catch (error) {
+            console.error('Error notifying marketplace:', error.message);
+          }
+        }
       }
     }
     return response;
@@ -62,6 +81,10 @@ export class StoreController {
     const response = await this.service.delete(param.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'store_deleted' }, response.data.id);
+      this.marketplaceClient.emit(
+        { service: 'marketplace', module: 'store', action: 'delete' },
+        { id: response.data.id },
+      );
     }
     return response;
   }
