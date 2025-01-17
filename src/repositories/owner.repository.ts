@@ -7,7 +7,11 @@ import * as bcrypt from 'bcrypt';
 export class OwnerRepository extends BaseRepository<any> {
   constructor(prisma: PrismaService) {
     const relations = {
-      companies: true,
+      companies: {
+        where: {
+          deleted_at: null,
+        },
+      },
     };
     super(prisma, 'owner', relations, true); // 'role' is the Prisma model name
   }

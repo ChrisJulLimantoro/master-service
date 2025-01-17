@@ -9,6 +9,7 @@ export class CompanyController {
   constructor(
     private readonly service: CompanyService,
     @Inject('AUTH') private readonly authClient: ClientProxy,
+    @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:company' })
@@ -35,6 +36,7 @@ export class CompanyController {
     // broadcast to other services via RMQ
     if (response.success) {
       this.authClient.emit({ cmd: 'company_created' }, response.data);
+      this.inventoryClient.emit({ cmd: 'company_created' }, response.data);
     }
     return response;
   }
@@ -47,6 +49,7 @@ export class CompanyController {
     const response = await this.service.update(param.id, body);
     if (response.success) {
       this.authClient.emit({ cmd: 'company_updated' }, response.data);
+      this.inventoryClient.emit({ cmd: 'company_updated' }, response.data);
     }
     return response;
   }
@@ -58,6 +61,7 @@ export class CompanyController {
     const response = await this.service.delete(param.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'company_deleted' }, response.data.id);
+      this.inventoryClient.emit({ cmd: 'company_deleted' }, response.data.id);
     }
     return response;
   }
