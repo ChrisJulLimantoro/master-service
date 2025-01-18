@@ -10,6 +10,7 @@ export class CompanyController {
     private readonly service: CompanyService,
     @Inject('AUTH') private readonly authClient: ClientProxy,
     @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
+    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:company' })
@@ -37,6 +38,7 @@ export class CompanyController {
     if (response.success) {
       this.authClient.emit({ cmd: 'company_created' }, response.data);
       this.inventoryClient.emit({ cmd: 'company_created' }, response.data);
+      this.transactionClient.emit({ cmd: 'company_created' }, response.data);
     }
     return response;
   }
@@ -50,6 +52,7 @@ export class CompanyController {
     if (response.success) {
       this.authClient.emit({ cmd: 'company_updated' }, response.data);
       this.inventoryClient.emit({ cmd: 'company_updated' }, response.data);
+      this.transactionClient.emit({ cmd: 'company_updated' }, response.data);
     }
     return response;
   }
@@ -62,6 +65,7 @@ export class CompanyController {
     if (response.success) {
       this.authClient.emit({ cmd: 'company_deleted' }, response.data.id);
       this.inventoryClient.emit({ cmd: 'company_deleted' }, response.data.id);
+      this.transactionClient.emit({ cmd: 'company_deleted' }, response.data.id);
     }
     return response;
   }

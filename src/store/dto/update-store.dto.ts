@@ -8,6 +8,10 @@ export class UpdateStoreRequest {
   longitude: number | null;
   latitude: number | null;
   information: string | null;
+  is_active: boolean | null;
+  is_flex_price: boolean | null;
+  is_float_price: boolean | null;
+  poin_config: number | null;
 
   constructor(data: {
     code: string | null;
@@ -18,6 +22,10 @@ export class UpdateStoreRequest {
     longitude: number | null;
     latitude: number | null;
     information: string | null;
+    is_active: boolean | null;
+    is_flex_price: boolean | null;
+    is_float_price: boolean | null;
+    poin_config: number | null;
   }) {
     this.code = data.code;
     this.name = data.name;
@@ -27,6 +35,10 @@ export class UpdateStoreRequest {
     this.longitude = data.longitude;
     this.latitude = data.latitude;
     this.information = data.information;
+    this.is_active = data.is_active;
+    this.is_flex_price = data.is_flex_price;
+    this.is_float_price = data.is_float_price;
+    this.poin_config = data.poin_config;
   }
 
   static schema() {
@@ -39,6 +51,10 @@ export class UpdateStoreRequest {
       longitude: z.number().optional(),
       latitude: z.number().optional(),
       information: z.string().nullable().optional(),
+      is_active: z.boolean().nullable().optional(),
+      is_flex_price: z.boolean().nullable().optional(),
+      is_float_price: z.boolean().nullable().optional(),
+      poin_config: z.number().nullable().optional(),
     });
   }
 }

@@ -40,6 +40,9 @@ model Store {
   latitude    Decimal           @db.Decimal(65, 20)
   information String?            @db.Text
   is_active   Boolean           @default(true)
+  is_flex_price Boolean @default(false)
+  is_float_price Boolean @default(false)
+  poin_config Int @default(0)
 
   company_id String @db.Uuid
 

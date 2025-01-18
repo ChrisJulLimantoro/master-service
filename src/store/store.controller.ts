@@ -11,6 +11,7 @@ export class StoreController {
     @Inject('AUTH') private readonly authClient: ClientProxy,
     @Inject('MARKETPLACE') private readonly marketplaceClient: ClientProxy,
     @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
+    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:store' })
@@ -37,6 +38,7 @@ export class StoreController {
       // broadcast to other services via RMQ
       this.authClient.emit({ cmd: 'store_created' }, response.data);
       this.inventoryClient.emit({ cmd: 'store_created' }, response.data);
+      this.transactionClient.emit({ cmd: 'store_created' }, response.data);
       try {
         console.log('Notifying marketplace...');
         await this.service.notifyMarketplace(response.data);
@@ -62,6 +64,7 @@ export class StoreController {
       if (body.code || body.name) {
         this.authClient.emit({ cmd: 'store_updated' }, response.data);
         this.inventoryClient.emit({ cmd: 'store_updated' }, response.data);
+        this.transactionClient.emit({ cmd: 'store_updated' }, response.data);
         if (!isOnlyNpwpAndOpenDateUpdated) {
           try {
             console.log('Notifying marketplace...');
@@ -85,6 +88,7 @@ export class StoreController {
     if (response.success) {
       this.authClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.inventoryClient.emit({ cmd: 'store_deleted' }, response.data.id);
+      this.transactionClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.marketplaceClient.emit(
         { service: 'marketplace', module: 'store', action: 'delete' },
         { id: response.data.id },
