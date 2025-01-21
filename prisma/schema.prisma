@@ -15,7 +15,7 @@ datasource db {
 
 model Company {
   id       String         @id @db.Uuid @default(uuid())
-  code     String
+  code     String       @unique
   name     String
   owner_id String @db.Uuid
 
@@ -31,7 +31,7 @@ model Company {
 
 model Store {
   id          String         @id @db.Uuid @default(uuid())
-  code        String
+  code        String        
   name        String
   npwp        String
   open_date   DateTime          @db.Date
