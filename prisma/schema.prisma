@@ -17,6 +17,7 @@ model Company {
   id       String         @id @db.Uuid @default(uuid())
   code     String       @unique
   name     String
+  description String? @db.Text
   owner_id String @db.Uuid
 
   created_at DateTime @default(now())
