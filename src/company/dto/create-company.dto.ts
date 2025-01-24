@@ -19,7 +19,7 @@ export class CreateCompanyRequest {
 
   static schema() {
     return z.object({
-      code: z.string().max(5),
+      code: z.string().min(2).max(5),
       name: z.string().min(5).max(255),
       owner_id: z.string().uuid(),
       description: z.string().max(255).nullable().optional(),
