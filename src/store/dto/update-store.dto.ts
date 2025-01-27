@@ -7,11 +7,12 @@ export class UpdateStoreRequest {
   open_date: Date | null;
   longitude: number | null;
   latitude: number | null;
-  information: string | null;
+  description: string | null;
   is_active: boolean | null;
   is_flex_price: boolean | null;
   is_float_price: boolean | null;
   poin_config: number | null;
+  logo: string | null;
 
   constructor(data: {
     code: string | null;
@@ -21,24 +22,26 @@ export class UpdateStoreRequest {
     open_date: Date | null;
     longitude: number | null;
     latitude: number | null;
-    information: string | null;
+    description: string | null;
     is_active: boolean | null;
     is_flex_price: boolean | null;
     is_float_price: boolean | null;
-    poin_config: number | null;
+    poin_config: string | null;
+    logo: string | null;
   }) {
     this.code = data.code;
     this.name = data.name;
     this.npwp = data.npwp;
     this.address = data.address;
-    this.open_date = data.open_date;
-    this.longitude = data.longitude;
-    this.latitude = data.latitude;
-    this.information = data.information;
+    this.open_date = new Date(data.open_date);
+    this.longitude = parseFloat(data.longitude.toString());
+    this.latitude = parseFloat(data.latitude.toString());
+    this.description = data.description;
     this.is_active = data.is_active;
     this.is_flex_price = data.is_flex_price;
     this.is_float_price = data.is_float_price;
-    this.poin_config = data.poin_config;
+    this.poin_config = parseInt(data.poin_config);
+    this.logo = data.logo;
   }
 
   static schema() {
@@ -50,11 +53,12 @@ export class UpdateStoreRequest {
       open_date: z.date().optional(),
       longitude: z.number().optional(),
       latitude: z.number().optional(),
-      information: z.string().nullable().optional(),
+      description: z.string().nullable().optional(),
       is_active: z.boolean().nullable().optional(),
       is_flex_price: z.boolean().nullable().optional(),
       is_float_price: z.boolean().nullable().optional(),
       poin_config: z.number().nullable().optional(),
+      logo: z.string().nullable().optional(),
     });
   }
 }

@@ -8,11 +8,12 @@ export class CreateStoreRequest {
   open_date: Date;
   longitude: number;
   latitude: number;
-  information: string | null;
+  description: string | null;
   is_active: boolean | null;
   is_flex_price: boolean | null;
   is_float_price: boolean | null;
   poin_config: number | null;
+  logo: string;
 
   constructor(data: {
     code: string;
@@ -23,11 +24,12 @@ export class CreateStoreRequest {
     open_date: Date;
     longitude: number;
     latitude: number;
-    information: string | null;
+    description: string | null;
     is_active: boolean | null;
     is_flex_price: boolean | null;
     is_float_price: boolean | null;
     poin_config: number | null;
+    logo: string;
   }) {
     this.code = data.code;
     this.name = data.name;
@@ -37,11 +39,12 @@ export class CreateStoreRequest {
     this.open_date = new Date(data.open_date);
     this.longitude = data.longitude;
     this.latitude = data.latitude;
-    this.information = data.information;
+    this.description = data.description;
     this.is_active = data.is_active;
     this.is_flex_price = data.is_flex_price;
     this.is_float_price = data.is_float_price;
     this.poin_config = data.poin_config;
+    this.logo = data.logo;
   }
 
   static schema() {
@@ -54,11 +57,12 @@ export class CreateStoreRequest {
       open_date: z.date(),
       longitude: z.number().min(-180).max(180),
       latitude: z.number().min(-90).max(90),
-      information: z.string().nullable().optional(),
+      description: z.string().nullable().optional(),
       is_active: z.boolean().nullable().optional(),
       is_flex_price: z.boolean().nullable().optional(),
       is_float_price: z.boolean().nullable().optional(),
       poin_config: z.number().nullable().optional(),
+      logo: z.string().max(255),
     });
   }
 }

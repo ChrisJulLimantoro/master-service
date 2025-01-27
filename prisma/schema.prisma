@@ -39,11 +39,12 @@ model Store {
   address     String            @db.Text
   longitude   Decimal           @db.Decimal(65, 20)
   latitude    Decimal           @db.Decimal(65, 20)
-  information String?            @db.Text
+  description String?            @db.Text
   is_active   Boolean           @default(true)
   is_flex_price Boolean @default(false)
   is_float_price Boolean @default(false)
   poin_config Int @default(0)
+  logo        String
 
   company_id String @db.Uuid
 
