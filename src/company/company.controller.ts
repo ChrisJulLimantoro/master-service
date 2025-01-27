@@ -23,7 +23,6 @@ export class CompanyController {
         delete filter[key];
       }
     });
-    console.log('after', filter);
     return this.service.findAll(filter);
   }
 
