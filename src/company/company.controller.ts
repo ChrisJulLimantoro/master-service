@@ -15,8 +15,16 @@ export class CompanyController {
 
   @MessagePattern({ cmd: 'get:company' })
   @Describe('Get all company')
-  async findAll(): Promise<CustomResponse> {
-    return this.service.findAll();
+  async findAll(@Payload() data: any): Promise<CustomResponse> {
+    const filter = data.body;
+    const allowedFilter = ['name', 'owner_id']; // protection from SQL injection
+    Object.keys(filter).forEach((key) => {
+      if (!allowedFilter.includes(key)) {
+        delete filter[key];
+      }
+    });
+    console.log('after', filter);
+    return this.service.findAll(filter);
   }
 
   @MessagePattern({ cmd: 'get:company/*' })

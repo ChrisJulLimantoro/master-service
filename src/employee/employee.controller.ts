@@ -1,8 +1,15 @@
 import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 import { EmployeeService } from './employee.service';
+import { Exempt } from 'src/decorator/exempt.decorator';
 
 @Controller('employee')
 export class EmployeeController {
@@ -59,5 +66,30 @@ export class EmployeeController {
       this.authClient.emit({ cmd: 'employee_deleted' }, response.data.id);
     }
     return response;
+  }
+
+  @MessagePattern({ cmd: 'password_changed' })
+  @Exempt()
+  async passwordChanged(@Payload() data: any, @Ctx() context: RmqContext) {
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+
+    const sanitizedData = {
+      ...data,
+      created_at: new Date(data.created_at),
+      updated_at: new Date(data.updated_at),
+      deleted_at: data.deleted_at ? new Date(data.deleted_at) : null,
+    };
+
+    try {
+      const response = await this.service.passwordChanged(data);
+      if (response.success) {
+        channel.ack(originalMsg);
+      }
+    } catch (error) {
+      console.error('Error processing password_changed event', error.stack);
+      channel.nack(originalMsg);
+      // Optional: Send the error message to a DLQ (Dead Letter Queue) or retry queue
+    }
   }
 }

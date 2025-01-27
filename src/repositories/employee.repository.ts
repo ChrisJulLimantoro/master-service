@@ -11,7 +11,6 @@ export class EmployeeRepository extends BaseRepository<any> {
   }
 
   async create(data: any) {
-    data.password = await bcrypt.hash('password', 10);
     const check = await this.checkUnique(data.email);
     if (check) {
       return await this.prisma.employee.create({ data });
@@ -20,9 +19,6 @@ export class EmployeeRepository extends BaseRepository<any> {
   }
 
   async update(id: string, data: any) {
-    if (data.password) {
-      data.password = await bcrypt.hash(data.password, 10);
-    }
     return await this.prisma.employee.update({
       where: { id },
       data,
