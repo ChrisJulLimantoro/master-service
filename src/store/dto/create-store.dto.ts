@@ -28,7 +28,7 @@ export class CreateStoreRequest {
     is_active: boolean | null;
     is_flex_price: boolean | null;
     is_float_price: boolean | null;
-    poin_config: number | null;
+    poin_config: string | null;
     logo: string;
   }) {
     this.code = data.code;
@@ -43,7 +43,7 @@ export class CreateStoreRequest {
     this.is_active = data.is_active;
     this.is_flex_price = data.is_flex_price;
     this.is_float_price = data.is_float_price;
-    this.poin_config = data.poin_config;
+    this.poin_config = parseInt(data.poin_config);
     this.logo = data.logo;
   }
 
