@@ -16,6 +16,7 @@ export class EmployeeController {
   constructor(
     private readonly service: EmployeeService,
     @Inject('AUTH') private readonly authClient: ClientProxy,
+    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:employee' })
@@ -41,6 +42,7 @@ export class EmployeeController {
     // broadcast to other services via RMQ
     if (response.success) {
       this.authClient.emit({ cmd: 'employee_created' }, response.data);
+      this.transactionClient.emit({ cmd: 'employee_created' }, response.data);
     }
     return response;
   }
@@ -53,6 +55,7 @@ export class EmployeeController {
     const response = await this.service.update(param.id, body);
     if (response.success && body.password) {
       this.authClient.emit({ cmd: 'employee_updated' }, response.data);
+      this.transactionClient.emit({ cmd: 'employee_updated' }, response.data);
     }
     return response;
   }
@@ -64,6 +67,10 @@ export class EmployeeController {
     const response = await this.service.delete(param.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'employee_deleted' }, response.data.id);
+      this.transactionClient.emit(
+        { cmd: 'employee_deleted' },
+        response.data.id,
+      );
     }
     return response;
   }

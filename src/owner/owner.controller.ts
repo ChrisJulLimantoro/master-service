@@ -9,6 +9,7 @@ export class OwnerController {
   constructor(
     private readonly service: OwnerService,
     @Inject('AUTH') private readonly authClient: ClientProxy,
+    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:owner' })
@@ -29,6 +30,7 @@ export class OwnerController {
     const response = await this.service.create(createData);
     if (response.success) {
       this.authClient.emit({ cmd: 'owner_created' }, response.data);
+      this.transactionClient.emit({ cmd: 'owner_created' }, response.data);
     }
     return response;
   }
@@ -39,9 +41,12 @@ export class OwnerController {
     const param = data.params;
     const body = data.body;
     const response = await this.service.update(param.id, body);
-    if (response.success && body.password) {
+    if (response.success) {
       //only if changing password emit to auth since auth only save the password and email
-      this.authClient.emit({ cmd: 'owner_updated' }, response.data);
+      if (body.password) {
+        this.authClient.emit({ cmd: 'owner_updated' }, response.data);
+      }
+      this.transactionClient.emit({ cmd: 'owner_updated' }, response.data);
     }
     return response;
   }
@@ -53,6 +58,7 @@ export class OwnerController {
     const response = await this.service.delete(param.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'owner_deleted' }, response.data.id);
+      this.transactionClient.emit({ cmd: 'owner_deleted' }, response.data.id);
     }
     return response;
   }
