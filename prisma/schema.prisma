@@ -43,8 +43,19 @@ model Store {
   is_active   Boolean           @default(true)
   is_flex_price Boolean @default(false)
   is_float_price Boolean @default(false)
+  tax_percentage    Decimal @db.Decimal @default(11)
   poin_config Int @default(0)
   logo        String
+  // Defect
+  // defect_nominal Decimal @default(0)
+  // defect_percentage Decimal @default(0)
+  // // Discount
+  // discount_trade Decimal @default(0)
+  // discount_kbl Decimal @default(0)
+  // // adjustment price TT/KBL
+  // adjustment_price_trade Decimal @default(0)
+  // adjustment_price_kbl Decimal @default(0)
+
 
   company_id String @db.Uuid
 

@@ -13,6 +13,7 @@ export class CreateStoreRequest {
   is_flex_price: boolean | null;
   is_float_price: boolean | null;
   poin_config: number | null;
+  tax_percentage: number | null;
   logo: string;
 
   constructor(data: {
@@ -29,6 +30,7 @@ export class CreateStoreRequest {
     is_flex_price: boolean | null;
     is_float_price: boolean | null;
     poin_config: string | null;
+    tax_percentage: number | null;
     logo: string;
   }) {
     this.code = data.code;
@@ -44,6 +46,7 @@ export class CreateStoreRequest {
     this.is_flex_price = data.is_flex_price;
     this.is_float_price = data.is_float_price;
     this.poin_config = parseInt(data.poin_config);
+    this.tax_percentage = data.tax_percentage;
     this.logo = data.logo;
   }
 
@@ -62,6 +65,7 @@ export class CreateStoreRequest {
       is_flex_price: z.boolean().nullable().optional(),
       is_float_price: z.boolean().nullable().optional(),
       poin_config: z.number().nullable().optional(),
+      tax_percentage: z.number().nullable().optional(),
       logo: z.string().max(255),
     });
   }
