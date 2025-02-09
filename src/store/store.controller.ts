@@ -16,8 +16,9 @@ export class StoreController {
 
   @MessagePattern({ cmd: 'get:store' })
   @Describe('Get all store')
-  async findAll(): Promise<CustomResponse> {
-    return this.service.findAll();
+  async findAll(@Payload() data: any): Promise<CustomResponse> {
+    const filter = data.body;
+    return this.service.findAll(filter);
   }
 
   @MessagePattern({ cmd: 'get:store/*' })
