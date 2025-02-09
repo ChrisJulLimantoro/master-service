@@ -20,21 +20,30 @@ export class EmployeeController {
   ) {}
 
   @MessagePattern({ cmd: 'get:employee' })
-  @Describe('Get all employee')
+  @Describe({
+    description: 'Get all employee',
+    fe: ['master/employee:open', 'settings/user-role:all'],
+  })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = data.body;
     return this.service.findAll(filter);
   }
 
   @MessagePattern({ cmd: 'get:employee/*' })
-  @Describe('Get a employee by id')
+  @Describe({
+    description: 'Get a employee by id',
+    fe: ['master/employee:edit', 'master/employee:detail'],
+  })
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
     const param = data.params;
     return this.service.findOne(param.id);
   }
 
   @MessagePattern({ cmd: 'post:employee' })
-  @Describe('Create a new employee')
+  @Describe({
+    description: 'Create a new employee',
+    fe: ['master/employee:add'],
+  })
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
     createData.owner_id = data.params.user.id;
@@ -49,7 +58,7 @@ export class EmployeeController {
   }
 
   @MessagePattern({ cmd: 'put:employee/*' })
-  @Describe('Modify employee')
+  @Describe({ description: 'Modify employee', fe: ['master/employee:edit'] })
   async update(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const body = data.body;
@@ -62,7 +71,7 @@ export class EmployeeController {
   }
 
   @MessagePattern({ cmd: 'delete:employee/*' })
-  @Describe('Delete employee')
+  @Describe({ description: 'Delete employee', fe: ['master/employee:delete'] })
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const response = await this.service.delete(param.id);

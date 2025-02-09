@@ -3,6 +3,7 @@ import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { OwnerService } from './owner.service';
 import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
+import { Exempt } from 'src/decorator/exempt.decorator';
 
 @Controller('owner')
 export class OwnerController {
@@ -13,18 +14,21 @@ export class OwnerController {
   ) {}
 
   @MessagePattern({ cmd: 'get:owner' })
-  @Describe('Get all owner')
+  @Exempt()
+  // @Describe('Get all owner')
   async findAll(): Promise<CustomResponse> {
     return this.service.findAll();
   }
 
   @MessagePattern({ cmd: 'get:owner/*' })
+  @Exempt()
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
     return this.service.findOne(data.params.id);
   }
 
   @MessagePattern({ cmd: 'post:owner' })
-  @Describe('Create a new owner')
+  @Exempt()
+  // @Describe('Create a new owner')
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
     const response = await this.service.create(createData);
@@ -36,7 +40,8 @@ export class OwnerController {
   }
 
   @MessagePattern({ cmd: 'put:owner/*' })
-  @Describe('Modify owner')
+  @Exempt()
+  // @Describe('Modify owner')
   async update(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const body = data.body;
@@ -52,7 +57,8 @@ export class OwnerController {
   }
 
   @MessagePattern({ cmd: 'delete:owner/*' })
-  @Describe('Delete owner')
+  @Exempt()
+  // @Describe('Delete owner')
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const response = await this.service.delete(param.id);

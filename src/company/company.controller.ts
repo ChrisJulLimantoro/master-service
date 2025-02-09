@@ -14,7 +14,18 @@ export class CompanyController {
   ) {}
 
   @MessagePattern({ cmd: 'get:company' })
-  @Describe('Get all company')
+  @Describe({
+    description: 'Get all company',
+    fe: [
+      'master/company:open',
+      'master/store:add',
+      'master/store:edit',
+      'master/store:detail',
+      'master/category:add',
+      'master/category:edit',
+      'master/category:detail',
+    ],
+  })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = data.body;
     const allowedFilter = ['name', 'owner_id']; // protection from SQL injection
@@ -27,14 +38,17 @@ export class CompanyController {
   }
 
   @MessagePattern({ cmd: 'get:company/*' })
-  @Describe('Get a company by id')
+  @Describe({
+    description: 'Get a company by id',
+    fe: ['master/company:edit', 'master/company:detail'],
+  })
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
     const param = data.params;
     return this.service.findOne(param.id);
   }
 
   @MessagePattern({ cmd: 'post:company' })
-  @Describe('Create a new company')
+  @Describe({ description: 'Create a new company', fe: ['master/company:add'] })
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
     console.log(data.params);
@@ -51,7 +65,7 @@ export class CompanyController {
   }
 
   @MessagePattern({ cmd: 'put:company/*' })
-  @Describe('Modify company')
+  @Describe({ description: 'Modify company', fe: ['master/company:edit'] })
   async update(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const body = data.body;
@@ -65,7 +79,7 @@ export class CompanyController {
   }
 
   @MessagePattern({ cmd: 'delete:company/*' })
-  @Describe('Delete company')
+  @Describe({ description: 'Delete company', fe: ['master/company:delete'] })
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const response = await this.service.delete(param.id);

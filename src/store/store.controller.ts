@@ -15,21 +15,41 @@ export class StoreController {
   ) {}
 
   @MessagePattern({ cmd: 'get:store' })
-  @Describe('Get all store')
+  @Describe({
+    description: 'Get all store',
+    fe: [
+      'master/store:open',
+      'settings/role:add',
+      'settings/role:edit',
+      'settings/role:detail',
+      'transaction/sales:add',
+      'transaction/sales:edit',
+      'transaction/sales:detail',
+    ],
+  })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = data.body;
     return this.service.findAll(filter);
   }
 
   @MessagePattern({ cmd: 'get:store/*' })
-  @Describe('Get a store by id')
+  @Describe({
+    description: 'Get a store by id',
+    fe: [
+      'master/store:edit',
+      'master/store:detail',
+      'transaction/sales:add',
+      'transaction/sales:edit',
+      'transaction/sales:detail',
+    ],
+  })
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
     const param = data.params;
     return this.service.findOne(param.id);
   }
 
   @MessagePattern({ cmd: 'post:store' })
-  @Describe('Create a new store')
+  @Describe({ description: 'Create a new store', fe: ['master/store:add'] })
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
     createData.owner_id = data.params.user.userId;
@@ -52,7 +72,7 @@ export class StoreController {
   }
 
   @MessagePattern({ cmd: 'put:store/*' })
-  @Describe('Modify store')
+  @Describe({ description: 'Modify store', fe: ['master/store:edit'] })
   async update(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const body = data.body;
@@ -81,7 +101,7 @@ export class StoreController {
   }
 
   @MessagePattern({ cmd: 'delete:store/*' })
-  @Describe('Delete store')
+  @Describe({ description: 'Delete store', fe: ['master/store:delete'] })
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
 
