@@ -28,7 +28,7 @@ export class StoreController {
     ],
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
-    const filter = data.body;
+    const filter = { company_id: data.body.company_id };
     return this.service.findAll(filter);
   }
 

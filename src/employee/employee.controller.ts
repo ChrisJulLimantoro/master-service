@@ -25,7 +25,7 @@ export class EmployeeController {
     fe: ['master/employee:open', 'settings/user-role:all'],
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
-    const filter = data.body;
+    const filter = { owner_id: data.body.owner_id };
     return this.service.findAll(filter);
   }
 
