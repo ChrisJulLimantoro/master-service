@@ -12,6 +12,7 @@ export class StoreController {
     @Inject('MARKETPLACE') private readonly marketplaceClient: ClientProxy,
     @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
     @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
+    @Inject('FINANCE') private readonly financeClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:store' })
@@ -40,6 +41,7 @@ export class StoreController {
       this.authClient.emit({ cmd: 'store_created' }, response.data);
       this.inventoryClient.emit({ cmd: 'store_created' }, response.data);
       this.transactionClient.emit({ cmd: 'store_created' }, response.data);
+      this.financeClient.emit({ cmd: 'store_created' }, response.data);
       try {
         console.log('Notifying marketplace...');
         await this.service.notifyMarketplace(response.data);
