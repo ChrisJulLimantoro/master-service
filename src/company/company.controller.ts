@@ -51,8 +51,6 @@ export class CompanyController {
   @Describe({ description: 'Create a new company', fe: ['master/company:add'] })
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
-    console.log(data.params);
-    createData.owner_id = data.params.user.id;
 
     const response = await this.service.create(createData);
     // broadcast to other services via RMQ
