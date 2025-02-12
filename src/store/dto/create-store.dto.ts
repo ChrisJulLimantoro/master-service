@@ -16,38 +16,38 @@ export class CreateStoreRequest {
   tax_percentage: number | null;
   logo: string;
 
-  constructor(data: {
-    code: string;
-    name: string;
-    company_id: string;
-    npwp: string;
-    address: string;
-    open_date: Date;
-    longitude: number;
-    latitude: number;
-    description: string | null;
-    is_active: boolean | null;
-    is_flex_price: boolean | null;
-    is_float_price: boolean | null;
-    poin_config: string | null;
-    tax_percentage: number | null;
-    logo: string;
+  constructor({
+    code,
+    name,
+    company_id,
+    npwp,
+    address,
+    open_date,
+    longitude,
+    latitude,
+    description,
+    is_active,
+    is_flex_price,
+    is_float_price,
+    poin_config,
+    tax_percentage,
+    logo,
   }) {
-    this.code = data.code;
-    this.name = data.name;
-    this.company_id = data.company_id;
-    this.npwp = data.npwp;
-    this.address = data.address;
-    this.open_date = new Date(data.open_date);
-    this.longitude = data.longitude;
-    this.latitude = data.latitude;
-    this.description = data.description;
-    this.is_active = data.is_active;
-    this.is_flex_price = data.is_flex_price;
-    this.is_float_price = data.is_float_price;
-    this.poin_config = parseInt(data.poin_config);
-    this.tax_percentage = data.tax_percentage;
-    this.logo = data.logo;
+    this.code = code;
+    this.name = name;
+    this.company_id = company_id;
+    this.npwp = npwp;
+    this.address = address;
+    this.open_date = new Date(open_date);
+    this.longitude = longitude;
+    this.latitude = latitude;
+    this.description = description;
+    this.is_active = is_active;
+    this.is_flex_price = is_flex_price;
+    this.is_float_price = is_float_price;
+    this.poin_config = parseInt(poin_config);
+    this.tax_percentage = parseInt(tax_percentage);
+    this.logo = logo;
   }
 
   static schema() {

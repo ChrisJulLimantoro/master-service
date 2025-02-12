@@ -24,6 +24,7 @@ export class CompanyController {
       'master/category:add',
       'master/category:edit',
       'master/category:detail',
+      'settings/role:add',
     ],
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
