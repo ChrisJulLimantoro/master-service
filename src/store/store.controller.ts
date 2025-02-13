@@ -53,7 +53,6 @@ export class StoreController {
   @Describe({ description: 'Create a new store', fe: ['master/store:add'] })
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
-    createData.owner_id = data.params.user.userId;
     const response = await this.service.create(createData);
 
     if (response.success) {
