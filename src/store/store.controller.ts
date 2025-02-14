@@ -41,6 +41,7 @@ export class StoreController {
       'transaction/sales:add',
       'transaction/sales:edit',
       'transaction/sales:detail',
+      'settings/password-change:all',
     ],
   })
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
