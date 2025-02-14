@@ -11,6 +11,7 @@ export class CompanyController {
     @Inject('AUTH') private readonly authClient: ClientProxy,
     @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
     @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
+    @Inject('FINANCE') private readonly financeClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:company' })
@@ -59,6 +60,7 @@ export class CompanyController {
       this.authClient.emit({ cmd: 'company_created' }, response.data);
       this.inventoryClient.emit({ cmd: 'company_created' }, response.data);
       this.transactionClient.emit({ cmd: 'company_created' }, response.data);
+      this.financeClient.emit({ cmd: 'company_created' }, response.data);
     }
     return response;
   }
