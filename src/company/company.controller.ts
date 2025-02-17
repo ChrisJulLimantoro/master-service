@@ -26,6 +26,19 @@ export class CompanyController {
       'master/category:edit',
       'master/category:detail',
       'settings/role:add',
+      'master/account:detail',
+      'master/account:edit',
+      'master/account:add',
+      'master/account:open',
+      'finance/mincomes:add',
+      'finance/mincomes:edit',
+      'finance/mincomes:detail',
+      'finance/mincomes:open',
+      'finance/mexpenses:add',
+      'finance/mexpenses:edit',
+      'finance/mexpenses:detail',
+      'finance/mexpenses:open',
+      'finance/profit-loss:open',
     ],
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
@@ -42,7 +55,7 @@ export class CompanyController {
   @MessagePattern({ cmd: 'get:company/*' })
   @Describe({
     description: 'Get a company by id',
-    fe: ['master/company:edit', 'master/company:detail'],
+    fe: ['master/company:edit', 'master/company:detail','master/account:detail','master/account:open','master/account:edit','master/account:add'],
   })
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
     const param = data.params;
