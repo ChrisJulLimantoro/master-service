@@ -91,12 +91,10 @@ export abstract class BaseService {
 
     try {
       // Perform bulk insert in parallel
-      const createdData = await Promise.all(
-        validatedData.map((item) => this.repository.create(item)),
-      );
+      const createdData = await this.repository.bulkCreate(validatedData);
 
       return CustomResponse.success(
-        `New ${createdData.length} Data Created!`,
+        `New ${createdData} Data Created!`,
         createdData,
         201,
       );
