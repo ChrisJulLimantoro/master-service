@@ -51,13 +51,14 @@ model Store {
   // Defect
   // defect_nominal Decimal @default(0)
   // defect_percentage Decimal @default(0)
-  // // Discount
+  // Grace Period Trade
+  // grace_period_trade Int @default(0) // Trades
+  // // Discount (%)
   // discount_trade Decimal @default(0)
-  // discount_kbl Decimal @default(0)
+  // discount_kbl Decimal @default(0) 
   // // adjustment price TT/KBL
   // adjustment_price_trade Decimal @default(0)
   // adjustment_price_kbl Decimal @default(0)
-
 
   company_id String @db.Uuid
 
@@ -67,7 +68,7 @@ model Store {
 
   company Company @relation(fields: [company_id], references: [id])
 
-  @@unique([name, company_id])
+  @@unique([code, company_id])
   @@map("stores")
 }
 

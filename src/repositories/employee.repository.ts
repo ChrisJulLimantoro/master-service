@@ -1,7 +1,6 @@
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { BaseRepository } from 'src/repositories/base.repository';
-import * as bcrypt from 'bcrypt';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
 export class EmployeeRepository extends BaseRepository<any> {
@@ -11,18 +10,26 @@ export class EmployeeRepository extends BaseRepository<any> {
   }
 
   async create(data: any) {
-    const check = await this.checkUnique(data.email);
-    if (check) {
+    try {
+      const check = await this.checkUnique(data.email);
+      if (!check) {
+        throw new Error('Email already exists');
+      }
       return await this.prisma.employee.create({ data });
+    } catch (error) {
+      throw new Error(`Create failed: ${error.message}`);
     }
-    return null;
   }
 
   async update(id: string, data: any) {
-    return await this.prisma.employee.update({
-      where: { id },
-      data,
-    });
+    try {
+      return await this.prisma.employee.update({
+        where: { id },
+        data,
+      });
+    } catch (error) {
+      throw new Error(`Update failed: ${error.message}`);
+    }
   }
 
   async checkUnique(email: string) {
