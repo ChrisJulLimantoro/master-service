@@ -14,6 +14,8 @@ export class CreateStoreRequest {
   is_float_price: boolean | null;
   poin_config: number | null;
   tax_percentage: number | null;
+  tax_purchase: number | null;
+  income_tax: number | null;
   logo: string;
 
   constructor({
@@ -32,6 +34,8 @@ export class CreateStoreRequest {
     poin_config,
     tax_percentage,
     logo,
+    tax_purchase, 
+    income_tax,
   }) {
     this.code = code;
     this.name = name;
@@ -46,8 +50,10 @@ export class CreateStoreRequest {
     this.is_flex_price = is_flex_price;
     this.is_float_price = is_float_price;
     this.poin_config = parseInt(poin_config);
-    this.tax_percentage = parseInt(tax_percentage);
+    this.tax_percentage = parseFloat(tax_percentage);
     this.logo = logo;
+    this.tax_purchase = parseFloat(tax_purchase);
+    this.income_tax = parseFloat(income_tax);
   }
 
   static schema() {
@@ -66,6 +72,8 @@ export class CreateStoreRequest {
       is_float_price: z.boolean().nullable().optional(),
       poin_config: z.number().nullable().optional(),
       tax_percentage: z.number().nullable().optional(),
+      tax_purchase: z.number().nullable().optional(),
+      income_tax: z.number().nullable().optional(),
       logo: z.string().max(255),
     });
   }

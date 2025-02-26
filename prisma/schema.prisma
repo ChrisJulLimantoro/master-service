@@ -43,7 +43,9 @@ model Store {
   is_active   Boolean           @default(true)
   is_flex_price Boolean @default(false)
   is_float_price Boolean @default(false)
-  tax_percentage    Decimal @db.Decimal @default(11)
+  tax_percentage    Decimal @db.Decimal @default(11) // ppn jual / tax sales
+  tax_purchase    Decimal @db.Decimal @default(0) // ppn beli emas
+  income_tax      Decimal @db.Decimal @default(0) // income tax PPh Badan (22% dari laba sebelum pajak)
   poin_config Int @default(0)
   logo        String
   // Defect
