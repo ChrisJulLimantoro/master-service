@@ -7,6 +7,7 @@ export class UpdateStoreRequest {
   open_date: Date | null;
   longitude: number | null;
   latitude: number | null;
+  wa_number: string | null;
   description: string | null;
   is_active: boolean | null;
   is_flex_price: boolean | null;
@@ -25,6 +26,7 @@ export class UpdateStoreRequest {
     open_date: Date | null;
     longitude: number | null;
     latitude: number | null;
+    wa_number: string | null;
     description: string | null;
     is_active: boolean | null;
     is_flex_price: boolean | null;
@@ -43,6 +45,7 @@ export class UpdateStoreRequest {
     this.longitude = parseFloat(data.longitude.toString());
     this.latitude = parseFloat(data.latitude.toString());
     this.description = data.description;
+    this.wa_number = data.wa_number;
     this.is_active = data.is_active;
     this.is_flex_price = data.is_flex_price;
     this.is_float_price = data.is_float_price;
@@ -61,6 +64,7 @@ export class UpdateStoreRequest {
       address: z.string().min(10).optional(),
       open_date: z.date().optional(),
       longitude: z.number().optional(),
+      wa_number: z.string().optional(),
       latitude: z.number().optional(),
       description: z.string().nullable().optional(),
       is_active: z.boolean().nullable().optional(),

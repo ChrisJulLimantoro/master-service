@@ -8,6 +8,7 @@ export class CreateStoreRequest {
   open_date: Date;
   longitude: number;
   latitude: number;
+  wa_number: string;
   description: string | null;
   is_active: boolean | null;
   is_flex_price: boolean | null;
@@ -28,13 +29,14 @@ export class CreateStoreRequest {
     longitude,
     latitude,
     description,
+    wa_number,
     is_active,
     is_flex_price,
     is_float_price,
     poin_config,
     tax_percentage,
     logo,
-    tax_purchase, 
+    tax_purchase,
     income_tax,
   }) {
     this.code = code;
@@ -46,6 +48,7 @@ export class CreateStoreRequest {
     this.longitude = longitude;
     this.latitude = latitude;
     this.description = description;
+    this.wa_number = wa_number;
     this.is_active = is_active;
     this.is_flex_price = is_flex_price;
     this.is_float_price = is_float_price;
@@ -65,6 +68,7 @@ export class CreateStoreRequest {
       address: z.string().min(10),
       open_date: z.date(),
       longitude: z.number().min(-180).max(180),
+      wa_number: z.string().min(1),
       latitude: z.number().min(-90).max(90),
       description: z.string().nullable().optional(),
       is_active: z.boolean().nullable().optional(),
