@@ -14,38 +14,42 @@ datasource db {
 }
 
 model Company {
-  id       String         @id @db.Uuid @default(uuid())
-  code     String       @unique
-  name     String
+  id          String  @id @default(uuid()) @db.Uuid
+  code        String  @unique
+  name        String
   description String? @db.Text
-  owner_id String @db.Uuid
+  owner_id    String  @db.Uuid
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  owner Owner @relation(fields: [owner_id], references: [id])
+  owner  Owner   @relation(fields: [owner_id], references: [id])
   stores Store[]
+
   @@unique([name, owner_id])
   @@map("companies")
 }
 
 model Store {
-  id          String         @id @db.Uuid @default(uuid())
-  code        String        
-  name        String
-  npwp        String
-  open_date   DateTime          @db.Date
-  address     String            @db.Text
-  longitude   Decimal           @db.Decimal(65, 20)
-  latitude    Decimal           @db.Decimal(65, 20)
-  description String?            @db.Text
-  is_active   Boolean           @default(true)
-  is_flex_price Boolean @default(false)
-  is_float_price Boolean @default(false)
-  tax_percentage    Decimal @db.Decimal @default(11)
-  poin_config Int @default(0)
-  logo        String
+  id             String   @id @default(uuid()) @db.Uuid
+  code           String
+  name           String
+  npwp           String
+  open_date      DateTime @db.Date
+  address        String   @db.Text
+  longitude      Decimal  @db.Decimal(65, 20)
+  latitude       Decimal  @db.Decimal(65, 20)
+  description    String?  @db.Text
+  is_active      Boolean  @default(true)
+  wa_number      String?
+  is_flex_price  Boolean  @default(false)
+  is_float_price Boolean  @default(false)
+  tax_percentage Decimal  @default(11) @db.Decimal // ppn jual / tax sales
+  tax_purchase   Decimal  @default(0) @db.Decimal // ppn beli emas
+  income_tax     Decimal  @default(0) @db.Decimal // income tax PPh Badan (22% dari laba sebelum pajak)
+  poin_config    Int      @default(0)
+  logo           String
   // Defect
   // defect_nominal Decimal @default(0)
   // defect_percentage Decimal @default(0)
@@ -60,8 +64,8 @@ model Store {
 
   company_id String @db.Uuid
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   company Company @relation(fields: [company_id], references: [id])
@@ -71,30 +75,31 @@ model Store {
 }
 
 model Owner {
-  id      String         @id @db.Uuid @default(uuid())
+  id       String @id @default(uuid()) @db.Uuid
   name     String
   email    String
   password String
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   companies Company[]
   employees Employee[]
+
   @@unique([email])
   @@map("owners")
 }
 
 model Employee {
-  id      String         @id @db.Uuid @default(uuid())
+  id       String @id @default(uuid()) @db.Uuid
   name     String
   email    String
   password String
   owner_id String @db.Uuid
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   owner Owner @relation(fields: [owner_id], references: [id])

@@ -7,6 +7,7 @@ export class UpdateStoreRequest {
   open_date: Date | null;
   longitude: number | null;
   latitude: number | null;
+  wa_number: string | null;
   description: string | null;
   is_active: boolean | null;
   is_flex_price: boolean | null;
@@ -14,6 +15,8 @@ export class UpdateStoreRequest {
   poin_config: number | null;
   tax_percentage: number | null;
   logo: string | null;
+  income_tax: number | null;
+  tax_purchase: number | null;
 
   constructor(data: {
     code: string | null;
@@ -23,6 +26,7 @@ export class UpdateStoreRequest {
     open_date: Date | null;
     longitude: number | null;
     latitude: number | null;
+    wa_number: string | null;
     description: string | null;
     is_active: boolean | null;
     is_flex_price: boolean | null;
@@ -30,6 +34,8 @@ export class UpdateStoreRequest {
     poin_config: string | null;
     tax_percentage: string | null;
     logo: string | null;
+    income_tax: string | null;
+    tax_purchase: string | null;
   }) {
     this.code = data.code;
     this.name = data.name;
@@ -39,12 +45,15 @@ export class UpdateStoreRequest {
     this.longitude = parseFloat(data.longitude.toString());
     this.latitude = parseFloat(data.latitude.toString());
     this.description = data.description;
+    this.wa_number = data.wa_number;
     this.is_active = data.is_active;
     this.is_flex_price = data.is_flex_price;
     this.is_float_price = data.is_float_price;
     this.poin_config = parseInt(data.poin_config);
     this.tax_percentage = parseFloat(data.tax_percentage);
     this.logo = data.logo;
+    this.income_tax = parseFloat(data.income_tax);
+    this.tax_purchase = parseFloat(data.tax_purchase);
   }
 
   static schema() {
@@ -55,6 +64,7 @@ export class UpdateStoreRequest {
       address: z.string().min(10).optional(),
       open_date: z.date().optional(),
       longitude: z.number().optional(),
+      wa_number: z.string().optional(),
       latitude: z.number().optional(),
       description: z.string().nullable().optional(),
       is_active: z.boolean().nullable().optional(),
@@ -63,6 +73,8 @@ export class UpdateStoreRequest {
       poin_config: z.number().nullable().optional(),
       tax_percentage: z.number().nullable().optional(),
       logo: z.string().nullable().optional(),
+      income_tax: z.number().nullable().optional(),
+      tax_purchase: z.number().nullable().optional(),
     });
   }
 }
