@@ -15,7 +15,6 @@ export class UpdateStoreRequest {
   poin_config: number | null;
   tax_percentage: number | null;
   logo: string | null;
-  income_tax: number | null;
   tax_purchase: number | null;
 
   constructor(data: {
@@ -34,7 +33,6 @@ export class UpdateStoreRequest {
     poin_config: string | null;
     tax_percentage: string | null;
     logo: string | null;
-    income_tax: string | null;
     tax_purchase: string | null;
   }) {
     this.code = data.code;
@@ -52,7 +50,6 @@ export class UpdateStoreRequest {
     this.poin_config = parseInt(data.poin_config);
     this.tax_percentage = parseFloat(data.tax_percentage);
     this.logo = data.logo;
-    this.income_tax = parseFloat(data.income_tax);
     this.tax_purchase = parseFloat(data.tax_purchase);
   }
 
@@ -73,7 +70,6 @@ export class UpdateStoreRequest {
       poin_config: z.number().nullable().optional(),
       tax_percentage: z.number().nullable().optional(),
       logo: z.string().nullable().optional(),
-      income_tax: z.number().nullable().optional(),
       tax_purchase: z.number().nullable().optional(),
     });
   }

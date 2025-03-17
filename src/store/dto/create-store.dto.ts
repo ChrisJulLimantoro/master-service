@@ -16,7 +16,6 @@ export class CreateStoreRequest {
   poin_config: number | null;
   tax_percentage: number | null;
   tax_purchase: number | null;
-  income_tax: number | null;
   logo: string;
 
   constructor({
@@ -37,7 +36,6 @@ export class CreateStoreRequest {
     tax_percentage,
     logo,
     tax_purchase,
-    income_tax,
   }) {
     this.code = code;
     this.name = name;
@@ -56,7 +54,6 @@ export class CreateStoreRequest {
     this.tax_percentage = parseFloat(tax_percentage);
     this.logo = logo;
     this.tax_purchase = parseFloat(tax_purchase);
-    this.income_tax = parseFloat(income_tax);
   }
 
   static schema() {
@@ -77,7 +74,6 @@ export class CreateStoreRequest {
       poin_config: z.number().nullable().optional(),
       tax_percentage: z.number().nullable().optional(),
       tax_purchase: z.number().nullable().optional(),
-      income_tax: z.number().nullable().optional(),
       logo: z.string().max(255),
     });
   }
