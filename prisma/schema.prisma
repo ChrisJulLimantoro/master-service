@@ -47,7 +47,6 @@ model Store {
   is_float_price Boolean  @default(false)
   tax_percentage Decimal  @default(11) @db.Decimal // ppn jual / tax sales
   tax_purchase   Decimal  @default(0) @db.Decimal // ppn beli emas
-  income_tax     Decimal  @default(0) @db.Decimal // income tax PPh Badan (22% dari laba sebelum pajak)
   poin_config    Int      @default(0)
   logo           String
   grace_period   Int      @default(0) // Days

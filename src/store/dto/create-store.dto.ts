@@ -16,7 +16,6 @@ export class CreateStoreRequest {
   poin_config: number | null;
   tax_percentage: number | null;
   tax_purchase: number | null;
-  income_tax: number | null;
   logo: string;
   grace_period: number | null;
 
@@ -80,7 +79,6 @@ export class CreateStoreRequest {
       poin_config: z.number().nullable().optional(),
       tax_percentage: z.number().nullable().optional(),
       tax_purchase: z.number().nullable().optional(),
-      income_tax: z.number().nullable().optional(),
       logo: z.string().max(255),
       grace_period: z.number().nullable().optional(),
     });
