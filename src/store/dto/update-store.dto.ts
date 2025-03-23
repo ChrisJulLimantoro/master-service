@@ -17,6 +17,7 @@ export class UpdateStoreRequest {
   logo: string | null;
   income_tax: number | null;
   tax_purchase: number | null;
+  grace_period: number | null;
 
   constructor(data: {
     code: string | null;
@@ -36,6 +37,7 @@ export class UpdateStoreRequest {
     logo: string | null;
     income_tax: string | null;
     tax_purchase: string | null;
+    grace_period: string | null;
   }) {
     this.code = data.code;
     this.name = data.name;
@@ -54,6 +56,7 @@ export class UpdateStoreRequest {
     this.logo = data.logo;
     this.income_tax = parseFloat(data.income_tax);
     this.tax_purchase = parseFloat(data.tax_purchase);
+    this.grace_period = parseInt(data.grace_period);
   }
 
   static schema() {
@@ -75,6 +78,7 @@ export class UpdateStoreRequest {
       logo: z.string().nullable().optional(),
       income_tax: z.number().nullable().optional(),
       tax_purchase: z.number().nullable().optional(),
+      grace_period: z.number().nullable().optional(),
     });
   }
 }

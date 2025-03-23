@@ -18,6 +18,7 @@ export class CreateStoreRequest {
   tax_purchase: number | null;
   income_tax: number | null;
   logo: string;
+  grace_period: number | null;
 
   constructor({
     code,
@@ -38,6 +39,7 @@ export class CreateStoreRequest {
     logo,
     tax_purchase,
     income_tax,
+    grace_period,
   }) {
     this.code = code;
     this.name = name;
@@ -57,6 +59,7 @@ export class CreateStoreRequest {
     this.logo = logo;
     this.tax_purchase = parseFloat(tax_purchase);
     this.income_tax = parseFloat(income_tax);
+    this.grace_period = grace_period != null ? parseInt(grace_period) : null;
   }
 
   static schema() {
@@ -79,6 +82,7 @@ export class CreateStoreRequest {
       tax_purchase: z.number().nullable().optional(),
       income_tax: z.number().nullable().optional(),
       logo: z.string().max(255),
+      grace_period: z.number().nullable().optional(),
     });
   }
 }

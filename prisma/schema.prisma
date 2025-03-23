@@ -50,6 +50,7 @@ model Store {
   income_tax     Decimal  @default(0) @db.Decimal // income tax PPh Badan (22% dari laba sebelum pajak)
   poin_config    Int      @default(0)
   logo           String
+  grace_period   Int      @default(0) // Days
   // Defect
   // defect_nominal Decimal @default(0)
   // defect_percentage Decimal @default(0)
