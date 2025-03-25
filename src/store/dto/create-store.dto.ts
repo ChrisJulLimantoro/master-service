@@ -37,7 +37,6 @@ export class CreateStoreRequest {
     tax_percentage,
     logo,
     tax_purchase,
-    income_tax,
     grace_period,
   }) {
     this.code = code;
@@ -57,7 +56,6 @@ export class CreateStoreRequest {
     this.tax_percentage = parseFloat(tax_percentage);
     this.logo = logo;
     this.tax_purchase = parseFloat(tax_purchase);
-    this.income_tax = parseFloat(income_tax);
     this.grace_period = grace_period != null ? parseInt(grace_period) : null;
   }
 
