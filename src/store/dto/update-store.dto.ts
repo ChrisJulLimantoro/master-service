@@ -17,6 +17,10 @@ export class UpdateStoreRequest {
   logo: string | null;
   tax_purchase: number | null;
   grace_period: number | null;
+  percent_tt_adjustment: number | null;
+  fixed_tt_adjustment: number | null;
+  percent_kbl_adjustment: number | null;
+  fixed_kbl_adjustment: number | null;
 
   constructor(data: {
     code: string | null;
@@ -36,6 +40,10 @@ export class UpdateStoreRequest {
     logo: string | null;
     tax_purchase: string | null;
     grace_period: string | null;
+    percent_tt_adjustment: string | null;
+    fixed_tt_adjustment: string | null;
+    percent_kbl_adjustment: string | null;
+    fixed_kbl_adjustment: string | null;
   }) {
     this.code = data.code;
     this.name = data.name;
@@ -54,6 +62,10 @@ export class UpdateStoreRequest {
     this.logo = data.logo;
     this.tax_purchase = parseFloat(data.tax_purchase);
     this.grace_period = parseInt(data.grace_period);
+    this.percent_tt_adjustment = parseFloat(data.percent_tt_adjustment);
+    this.fixed_tt_adjustment = parseFloat(data.fixed_tt_adjustment);
+    this.percent_kbl_adjustment = parseFloat(data.percent_kbl_adjustment);
+    this.fixed_kbl_adjustment = parseFloat(data.fixed_kbl_adjustment);
   }
 
   static schema() {
@@ -75,6 +87,10 @@ export class UpdateStoreRequest {
       logo: z.string().nullable().optional(),
       tax_purchase: z.number().nullable().optional(),
       grace_period: z.number().nullable().optional(),
+      percent_tt_adjustment: z.number().max(100).nullable().optional(),
+      fixed_tt_adjustment: z.number().nullable().optional(),
+      percent_kbl_adjustment: z.number().max(100).nullable().optional(),
+      fixed_kbl_adjustment: z.number().nullable().optional(),
     });
   }
 }
