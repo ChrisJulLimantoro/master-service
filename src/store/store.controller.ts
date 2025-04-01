@@ -33,7 +33,13 @@ export class StoreController {
     ],
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
-    const filter = { company_id: data.body.company_id };
+    var filter = {  };
+    const filterdata = data.body;
+    if (filterdata.company_id) {
+      filter['company'] = { id: filterdata.company_id };
+    } else {
+      filter['company'] = { owner_id: filterdata.owner_id };
+    }
     return this.service.findAll(filter);
   }
 
