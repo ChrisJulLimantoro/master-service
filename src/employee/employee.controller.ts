@@ -26,7 +26,8 @@ export class EmployeeController {
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = { owner_id: data.body.owner_id };
-    return this.service.findAll(filter);
+    const { page, limit, sort, search } = data.body;
+    return this.service.findAll(filter, page, limit, sort, search);
   }
 
   @MessagePattern({ cmd: 'get:employee/*' })

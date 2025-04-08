@@ -34,7 +34,8 @@ export class StoreController {
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = { company_id: data.body.company_id };
-    return this.service.findAll(filter);
+    const { page, limit, sort, search } = data.body;
+    return this.service.findAll(filter, page, limit, sort, search);
   }
 
   @MessagePattern({ cmd: 'get:store/*' })

@@ -83,6 +83,11 @@ describe('Store Repository Unit Testing', () => {
         is_float_price: false,
         tax_percentage: 10,
         poin_config: 5,
+        fixed_kbl_adjustment: 0,
+        percent_kbl_adjustment: 0,
+        fixed_tt_adjustment: 0,
+        percent_tt_adjustment: 0,
+        wa_number: '08123456789',
       });
       const dbStore = await prisma.store.findUnique({
         where: { id: newStore.id },
@@ -115,6 +120,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
         {
           name: 'NewStore',
@@ -131,6 +141,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
 
@@ -154,6 +169,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: true,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
       const count = await repository.bulkCreate([
@@ -172,6 +192,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
       expect(count).toBe(0);
@@ -196,6 +221,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
         {
           name: 'NewStore',
@@ -212,11 +242,16 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
 
       const result = await repository.findAll();
-      expect(result).toHaveLength(2);
+      expect(result.data).toHaveLength(2);
     });
     it('should return all stores with filter (company_id)', async () => {
       await repository.bulkCreate([
@@ -235,6 +270,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
         {
           name: 'NewStore',
@@ -251,6 +291,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
 
@@ -301,6 +346,10 @@ describe('Store Repository Unit Testing', () => {
         is_float_price: false,
         tax_percentage: 10,
         poin_config: 5,
+        fixed_kbl_adjustment: 0,
+        percent_kbl_adjustment: 0,
+        fixed_tt_adjustment: 0,
+        percent_tt_adjustment: 0,
       });
 
       const result = await repository.findOne(store.id);
@@ -331,6 +380,10 @@ describe('Store Repository Unit Testing', () => {
         is_float_price: false,
         tax_percentage: 10,
         poin_config: 5,
+        fixed_kbl_adjustment: 0,
+        percent_kbl_adjustment: 0,
+        fixed_tt_adjustment: 0,
+        percent_tt_adjustment: 0,
       });
 
       await repository.update(store.id, { name: 'Updated Name' });
@@ -357,6 +410,10 @@ describe('Store Repository Unit Testing', () => {
         is_float_price: false,
         tax_percentage: 10,
         poin_config: 5,
+        fixed_kbl_adjustment: 0,
+        percent_kbl_adjustment: 0,
+        fixed_tt_adjustment: 0,
+        percent_tt_adjustment: 0,
       });
 
       await repository.delete(store.id);
@@ -383,6 +440,10 @@ describe('Store Repository Unit Testing', () => {
         is_float_price: false,
         tax_percentage: 10,
         poin_config: 5,
+        fixed_kbl_adjustment: 0,
+        percent_kbl_adjustment: 0,
+        fixed_tt_adjustment: 0,
+        percent_tt_adjustment: 0,
       });
 
       await repository.delete(store.id);
@@ -413,6 +474,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
         {
           name: 'NewStore',
@@ -429,6 +495,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
       const result = await repository.count();
@@ -451,6 +522,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
         {
           name: 'NewStore',
@@ -467,6 +543,11 @@ describe('Store Repository Unit Testing', () => {
           is_float_price: false,
           tax_percentage: 10,
           poin_config: 5,
+          fixed_kbl_adjustment: 0,
+          percent_kbl_adjustment: 0,
+          fixed_tt_adjustment: 0,
+          percent_tt_adjustment: 0,
+          wa_number: '08123456789',
         },
       ]);
       const result = await repository.count({ company_id: company_id_1 });

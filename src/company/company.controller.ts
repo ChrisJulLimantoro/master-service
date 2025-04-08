@@ -19,6 +19,7 @@ export class CompanyController {
     description: 'Get all company',
     fe: [
       'master/company:open',
+      'master/store:open',
       'master/store:add',
       'master/store:edit',
       'master/store:detail',
@@ -43,19 +44,28 @@ export class CompanyController {
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = data.body;
+    console.log(data.body);
+    const { page, limit, sort, search } = data.body;
     const allowedFilter = ['name', 'owner_id']; // protection from SQL injection
     Object.keys(filter).forEach((key) => {
       if (!allowedFilter.includes(key)) {
         delete filter[key];
       }
     });
-    return this.service.findAll(filter);
+    return this.service.findAll(filter, page, limit, sort, search);
   }
 
   @MessagePattern({ cmd: 'get:company/*' })
   @Describe({
     description: 'Get a company by id',
-    fe: ['master/company:edit', 'master/company:detail','master/account:detail','master/account:open','master/account:edit','master/account:add'],
+    fe: [
+      'master/company:edit',
+      'master/company:detail',
+      'master/account:detail',
+      'master/account:open',
+      'master/account:edit',
+      'master/account:add',
+    ],
   })
   async findOne(@Payload() data: any): Promise<CustomResponse | null> {
     const param = data.params;
