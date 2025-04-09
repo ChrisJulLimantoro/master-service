@@ -27,7 +27,7 @@ model Company {
   owner  Owner   @relation(fields: [owner_id], references: [id])
   stores Store[]
 
-  @@unique([name, owner_id])
+  @@unique([code, owner_id])
   @@map("companies")
 }
 

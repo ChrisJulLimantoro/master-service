@@ -30,6 +30,11 @@ export class StoreService extends BaseService {
     return new UpdateStoreRequest(data);
   }
 
+  async create(data: any): Promise<CustomResponse> {
+    data.code = data.code.toUpperCase();
+    return super.create(data);
+  }
+
   async notifyMarketplace(storeData: any): Promise<any> {
     const apiGatewayUrl = 'http://127.0.0.1:3001/api/store';
 

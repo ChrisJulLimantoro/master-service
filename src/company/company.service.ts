@@ -4,6 +4,7 @@ import { CompanyRepository } from 'src/repositories/company.repository';
 import { ValidationService } from 'src/validation/validation.service';
 import { CreateCompanyRequest } from './dto/create-company.dto';
 import { UpdateCompanyRequest } from './dto/update-company.dto';
+import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 
 @Injectable()
 export class CompanyService extends BaseService {
@@ -24,5 +25,10 @@ export class CompanyService extends BaseService {
 
   protected transformUpdateData(data: any) {
     return new UpdateCompanyRequest(data);
+  }
+
+  async create(data: any): Promise<CustomResponse> {
+    data.code = data.code.toUpperCase();
+    return super.create(data);
   }
 }
