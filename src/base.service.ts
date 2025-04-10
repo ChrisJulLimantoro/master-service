@@ -43,11 +43,11 @@ export abstract class BaseService {
       return CustomResponse.error('Invalid page or limit', null, 400);
     }
     const data = await this.repository.findAll(
-      filter,
-      page,
-      limit,
-      sort,
-      search,
+      filter ?? {},
+      page ?? 0,
+      limit ?? 0,
+      sort ?? {},
+      search ?? '',
     );
     // const transform = {
     //   ...data,
