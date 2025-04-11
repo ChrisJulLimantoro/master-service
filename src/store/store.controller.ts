@@ -53,7 +53,7 @@ export class StoreController {
       'transaction/sales:add',
       'transaction/sales:edit',
       'transaction/sales:detail',
-      'settings/password-change:all',
+      'settings/change-store:all',
       'master/account:add',
       'master/account:edit',
       'master/account:detail',
