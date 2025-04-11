@@ -90,13 +90,14 @@ export class StoreController {
       this.inventoryClient.emit({ cmd: 'store_created' }, response.data);
       this.transactionClient.emit({ cmd: 'store_created' }, response.data);
       this.financeClient.emit({ cmd: 'store_created' }, response.data);
-      try {
-        console.log('Notifying marketplace...');
-        await this.service.notifyMarketplace(response.data);
-        console.log('Marketplace notified successfully.');
-      } catch (error) {
-        console.error('Error notifying marketplace:', error.message);
-      }
+      this.marketplaceClient.emit(
+        {
+          service: 'marketplace',
+          module: 'store',
+          action: 'create',
+        },
+        response.data,
+      );
     }
     return response;
   }
@@ -107,24 +108,20 @@ export class StoreController {
     const param = data.params;
     const body = data.body;
     body.owner_id = param.user.userId;
-    const isOnlyNpwpAndOpenDateUpdated = Object.keys(body).every((key) =>
-      ['npwp', 'open_date'].includes(key),
-    );
     const response = await this.service.update(param.id, body);
     if (response.success) {
       if (body.code || body.name) {
         this.authClient.emit({ cmd: 'store_updated' }, response.data);
         this.inventoryClient.emit({ cmd: 'store_updated' }, response.data);
         this.transactionClient.emit({ cmd: 'store_updated' }, response.data);
-        if (!isOnlyNpwpAndOpenDateUpdated) {
-          try {
-            console.log('Notifying marketplace...');
-            await this.service.notifyMarketplaceUpdate(param.id, response.data);
-            console.log('Marketplace notified successfully.');
-          } catch (error) {
-            console.error('Error notifying marketplace:', error.message);
-          }
-        }
+        this.marketplaceClient.emit(
+          {
+            service: 'marketplace',
+            module: 'store',
+            action: 'update',
+          },
+          response.data,
+        );
       }
     }
     return response;
