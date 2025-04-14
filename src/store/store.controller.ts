@@ -118,6 +118,7 @@ export class StoreController {
         this.authClient.emit({ cmd: 'store_updated' }, response.data);
         this.inventoryClient.emit({ cmd: 'store_updated' }, response.data);
         this.transactionClient.emit({ cmd: 'store_updated' }, response.data);
+        this.financeClient.emit({ cmd: 'store_updated' }, response.data);
         this.marketplaceClient.emit(
           {
             service: 'marketplace',
@@ -141,6 +142,7 @@ export class StoreController {
       this.authClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.inventoryClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.transactionClient.emit({ cmd: 'store_deleted' }, response.data.id);
+      this.financeClient.emit({ cmd: 'store_deleted' }, response.data);
       this.marketplaceClient.emit(
         { service: 'marketplace', module: 'store', action: 'delete' },
         { id: response.data.id },

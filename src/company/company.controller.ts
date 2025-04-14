@@ -101,6 +101,7 @@ export class CompanyController {
       this.authClient.emit({ cmd: 'company_updated' }, response.data);
       this.inventoryClient.emit({ cmd: 'company_updated' }, response.data);
       this.transactionClient.emit({ cmd: 'company_updated' }, response.data);
+      this.financeClient.emit({ cmd: 'company_updated' }, response.data);
     }
     return response;
   }
@@ -114,6 +115,7 @@ export class CompanyController {
       this.authClient.emit({ cmd: 'company_deleted' }, response.data.id);
       this.inventoryClient.emit({ cmd: 'company_deleted' }, response.data.id);
       this.transactionClient.emit({ cmd: 'company_deleted' }, response.data.id);
+      this.financeClient.emit({ cmd: 'company_deleted' }, response.data.id);
     }
     return response;
   }
