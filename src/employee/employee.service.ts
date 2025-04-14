@@ -30,18 +30,18 @@ export class EmployeeService extends BaseService {
     return new UpdateEmployeeRequest(data);
   }
 
-  async create(data: any) {
+  async create(data: any, user_id?: string) {
     data = this.transformCreateData(data);
     const validatedData = this.validation.validate(data, this.createSchema);
     validatedData.password = await bcrypt.hash('password', 10);
-    const newData = await this.repository.create(validatedData);
+    const newData = await this.repository.create(validatedData, user_id);
     if (!newData) {
       return CustomResponse.error('Failed to create new data', null, 500);
     }
     return CustomResponse.success('New Data Created!', newData, 201);
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: any, user_id?: string) {
     data = this.transformUpdateData(data);
     const oldData = await this.repository.findOne(id);
     if (!oldData) {
@@ -51,7 +51,7 @@ export class EmployeeService extends BaseService {
     if (validatedData.password) {
       validatedData.password = await bcrypt.hash(validatedData.password, 10);
     }
-    const newData = await this.repository.update(id, validatedData);
+    const newData = await this.repository.update(id, validatedData, user_id);
     return CustomResponse.success('Data Updated!', newData, 200);
   }
 

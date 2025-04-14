@@ -29,11 +29,11 @@ export class OwnerService extends BaseService {
     return new UpdateOwnerRequest(data);
   }
 
-  async create(data: any) {
+  async create(data: any, user_id?: string): Promise<CustomResponse> {
     data = this.transformCreateData(data);
     const validatedData = this.validation.validate(data, this.createSchema);
     validatedData.password = await bcrypt.hash(validatedData.password, 10);
-    const newData = await this.repository.create(validatedData);
+    const newData = await this.repository.create(validatedData, user_id);
     console.log(validatedData);
     if (!newData) {
       return CustomResponse.error('Failed to create new data', null, 500);
@@ -76,7 +76,7 @@ export class OwnerService extends BaseService {
     console.log('Password email sent to:', email); // Logging email yang dikirim
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: any, user_id?: string) {
     data = this.transformUpdateData(data);
     const oldData = await this.repository.findOne(id);
     if (!oldData) {
@@ -86,7 +86,7 @@ export class OwnerService extends BaseService {
     if (validatedData.password) {
       validatedData.password = await bcrypt.hash(validatedData.password, 10);
     }
-    const newData = await this.repository.update(id, validatedData);
+    const newData = await this.repository.update(id, validatedData, user_id);
     return CustomResponse.success('Data Updated!', newData, 200);
   }
 }

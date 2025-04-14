@@ -44,7 +44,6 @@ export class CompanyController {
   })
   async findAll(@Payload() data: any): Promise<CustomResponse> {
     const filter = data.body;
-    console.log(data.body);
     const { page, limit, sort, search } = data.body;
     const allowedFilter = ['name', 'owner_id']; // protection from SQL injection
     Object.keys(filter).forEach((key) => {
@@ -77,7 +76,7 @@ export class CompanyController {
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
 
-    const response = await this.service.create(createData);
+    const response = await this.service.create(createData, data.params.user.id);
     // broadcast to other services via RMQ
     if (response.success) {
       this.authClient.emit({ cmd: 'company_created' }, response.data);
@@ -93,7 +92,11 @@ export class CompanyController {
   async update(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const body = data.body;
-    const response = await this.service.update(param.id, body);
+    const response = await this.service.update(
+      param.id,
+      body,
+      data.params.user.id,
+    );
     if (response.success) {
       this.authClient.emit({ cmd: 'company_updated' }, response.data);
       this.inventoryClient.emit({ cmd: 'company_updated' }, response.data);
@@ -106,7 +109,7 @@ export class CompanyController {
   @Describe({ description: 'Delete company', fe: ['master/company:delete'] })
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
-    const response = await this.service.delete(param.id);
+    const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'company_deleted' }, response.data.id);
       this.inventoryClient.emit({ cmd: 'company_deleted' }, response.data.id);

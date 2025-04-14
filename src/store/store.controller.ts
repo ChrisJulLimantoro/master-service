@@ -82,7 +82,7 @@ export class StoreController {
   @Describe({ description: 'Create a new store', fe: ['master/store:add'] })
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
-    const response = await this.service.create(createData);
+    const response = await this.service.create(createData, data.params.user.id);
 
     if (response.success) {
       // broadcast to other services via RMQ
@@ -108,7 +108,11 @@ export class StoreController {
     const param = data.params;
     const body = data.body;
     body.owner_id = param.user.userId;
-    const response = await this.service.update(param.id, body);
+    const response = await this.service.update(
+      param.id,
+      body,
+      data.params.user.id,
+    );
     if (response.success) {
       if (body.code || body.name) {
         this.authClient.emit({ cmd: 'store_updated' }, response.data);
@@ -132,7 +136,7 @@ export class StoreController {
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
 
-    const response = await this.service.delete(param.id);
+    const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.inventoryClient.emit({ cmd: 'store_deleted' }, response.data.id);

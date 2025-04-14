@@ -9,24 +9,21 @@ export class EmployeeRepository extends BaseRepository<any> {
     super(prisma, 'employee', relations, true); // 'role' is the Prisma model name
   }
 
-  async create(data: any) {
+  async create(data: any, user_id?: string) {
     try {
       const check = await this.checkUnique(data.email);
       if (!check) {
         throw new Error('Email already exists');
       }
-      return await this.prisma.employee.create({ data });
+      return super.create(data, user_id);
     } catch (error) {
       throw new Error(`Create failed: ${error.message}`);
     }
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: any, user_id?: string) {
     try {
-      return await this.prisma.employee.update({
-        where: { id },
-        data,
-      });
+      return super.update(id, data, user_id);
     } catch (error) {
       throw new Error(`Update failed: ${error.message}`);
     }

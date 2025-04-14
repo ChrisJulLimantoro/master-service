@@ -16,19 +16,16 @@ export class OwnerRepository extends BaseRepository<any> {
     super(prisma, 'owner', relations, true); // 'role' is the Prisma model name
   }
 
-  async create(data: any) {
+  async create(data: any, user_id?: string) {
     const check = await this.checkUnique(data.email);
     if (check) {
-      return await this.prisma.owner.create({ data });
+      return super.create(data, user_id);
     }
     return null;
   }
 
-  async update(id: string, data: any) {
-    return await this.prisma.owner.update({
-      where: { id },
-      data,
-    });
+  async update(id: string, data: any, user_id?: string) {
+    return super.update(id, data, user_id);
   }
 
   async checkUnique(email: string) {

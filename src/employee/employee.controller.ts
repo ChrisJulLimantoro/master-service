@@ -49,7 +49,7 @@ export class EmployeeController {
     const createData = data.body;
     createData.owner_id = data.params.user.id;
 
-    const response = await this.service.create(createData);
+    const response = await this.service.create(createData, data.params.user.id);
     // broadcast to other services via RMQ
     if (response.success) {
       this.authClient.emit({ cmd: 'employee_created' }, response.data);
@@ -63,7 +63,11 @@ export class EmployeeController {
   async update(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
     const body = data.body;
-    const response = await this.service.update(param.id, body);
+    const response = await this.service.update(
+      param.id,
+      body,
+      data.params.user.id,
+    );
     if (response.success && body.password) {
       this.authClient.emit({ cmd: 'employee_updated' }, response.data);
       this.transactionClient.emit({ cmd: 'employee_updated' }, response.data);
@@ -75,7 +79,7 @@ export class EmployeeController {
   @Describe({ description: 'Delete employee', fe: ['master/employee:delete'] })
   async delete(@Payload() data: any): Promise<CustomResponse> {
     const param = data.params;
-    const response = await this.service.delete(param.id);
+    const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
       this.authClient.emit({ cmd: 'employee_deleted' }, response.data.id);
       this.transactionClient.emit(

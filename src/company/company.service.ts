@@ -27,8 +27,8 @@ export class CompanyService extends BaseService {
     return new UpdateCompanyRequest(data);
   }
 
-  async create(data: any): Promise<CustomResponse> {
+  async create(data: any, user_id?: string): Promise<CustomResponse> {
     data.code = data.code.toUpperCase();
-    return super.create(data);
+    return super.create(data, user_id);
   }
 }
