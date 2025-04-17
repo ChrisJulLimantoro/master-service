@@ -100,14 +100,6 @@ export class StoreController {
       this.inventoryClient.emit({ cmd: 'store_created' }, response.data);
       this.transactionClient.emit({ cmd: 'store_created' }, response.data);
       this.financeClient.emit({ cmd: 'store_created' }, response.data);
-      this.marketplaceClient.emit(
-        {
-          service: 'marketplace',
-          module: 'store',
-          action: 'create',
-        },
-        response.data,
-      );
     }
     return response;
   }
@@ -147,14 +139,6 @@ export class StoreController {
         this.inventoryClient.emit({ cmd: 'store_updated' }, response.data);
         this.transactionClient.emit({ cmd: 'store_updated' }, response.data);
         this.financeClient.emit({ cmd: 'store_updated' }, response.data);
-        this.marketplaceClient.emit(
-          {
-            service: 'marketplace',
-            module: 'store',
-            action: 'update',
-          },
-          response.data,
-        );
       }
     }
     return response;
@@ -189,10 +173,6 @@ export class StoreController {
       this.inventoryClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.transactionClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.financeClient.emit({ cmd: 'store_deleted' }, response.data);
-      this.marketplaceClient.emit(
-        { service: 'marketplace', module: 'store', action: 'delete' },
-        { id: response.data.id },
-      );
     }
     return response;
   }
