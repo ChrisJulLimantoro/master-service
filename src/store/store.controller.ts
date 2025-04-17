@@ -1,14 +1,24 @@
 import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  Ctx,
+  EventPattern,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 import { StoreService } from './store.service';
+import { RmqHelper } from 'src/helper/rmq.helper';
+import { Exempt } from 'src/decorator/exempt.decorator';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('store')
 export class StoreController {
   constructor(
     private readonly service: StoreService,
-    @Inject('AUTH') private readonly authClient: ClientProxy,
+    private readonly prisma: PrismaService,
     @Inject('MARKETPLACE') private readonly marketplaceClient: ClientProxy,
     @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
     @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
@@ -86,7 +96,7 @@ export class StoreController {
 
     if (response.success) {
       // broadcast to other services via RMQ
-      this.authClient.emit({ cmd: 'store_created' }, response.data);
+      RmqHelper.publishEvent('store.created', response.data);
       this.inventoryClient.emit({ cmd: 'store_created' }, response.data);
       this.transactionClient.emit({ cmd: 'store_created' }, response.data);
       this.financeClient.emit({ cmd: 'store_created' }, response.data);
@@ -102,6 +112,24 @@ export class StoreController {
     return response;
   }
 
+  @EventPattern('store.created')
+  @Exempt()
+  async createReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        console.log('Captured Store Create Event', data);
+        await this.service.createReplica(data);
+      },
+      {
+        queueName: 'store.created',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.store.created',
+        prisma: this.prisma,
+      },
+    )();
+  }
+
   @MessagePattern({ cmd: 'put:store/*' })
   @Describe({ description: 'Modify store', fe: ['master/store:edit'] })
   async update(@Payload() data: any): Promise<CustomResponse> {
@@ -115,7 +143,7 @@ export class StoreController {
     );
     if (response.success) {
       if (body.code || body.name) {
-        this.authClient.emit({ cmd: 'store_updated' }, response.data);
+        RmqHelper.publishEvent('store.updated', response.data);
         this.inventoryClient.emit({ cmd: 'store_updated' }, response.data);
         this.transactionClient.emit({ cmd: 'store_updated' }, response.data);
         this.financeClient.emit({ cmd: 'store_updated' }, response.data);
@@ -132,6 +160,24 @@ export class StoreController {
     return response;
   }
 
+  @EventPattern('store.updated')
+  @Exempt()
+  async updateReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Captured Store Update Event', data);
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        return await this.service.update(data.id, data);
+      },
+      {
+        queueName: 'store.updated',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.store.updated',
+        prisma: this.prisma,
+      },
+    )();
+  }
+
   @MessagePattern({ cmd: 'delete:store/*' })
   @Describe({ description: 'Delete store', fe: ['master/store:delete'] })
   async delete(@Payload() data: any): Promise<CustomResponse> {
@@ -139,7 +185,7 @@ export class StoreController {
 
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
-      this.authClient.emit({ cmd: 'store_deleted' }, response.data.id);
+      RmqHelper.publishEvent('store.deleted', response.data.id);
       this.inventoryClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.transactionClient.emit({ cmd: 'store_deleted' }, response.data.id);
       this.financeClient.emit({ cmd: 'store_deleted' }, response.data);
@@ -149,5 +195,23 @@ export class StoreController {
       );
     }
     return response;
+  }
+
+  @EventPattern('store.deleted')
+  @Exempt()
+  async deleteReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Captured Store Delete Event', data);
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        return await this.service.delete(data);
+      },
+      {
+        queueName: 'store.deleted',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.store.deleted',
+        prisma: this.prisma,
+      },
+    )();
   }
 }

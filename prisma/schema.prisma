@@ -103,6 +103,18 @@ model Employee {
   @@map("employees")
 }
 
+// Model for storing failed RabbitMQ message
+model FailedMessage {
+  id         Int   @id @default(autoincrement())
+  queue      String
+  routingKey String
+  payload    Json
+  error      String
+  timestamp  DateTime @default(now())
+
+  @@map("failed_messages")
+}
+
 model ActionLog {
   id          BigInt  @id @default(autoincrement())
   user_id     String?  @db.Uuid

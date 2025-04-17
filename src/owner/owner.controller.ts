@@ -1,15 +1,24 @@
 import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  Ctx,
+  EventPattern,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { OwnerService } from './owner.service';
 import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 import { Exempt } from 'src/decorator/exempt.decorator';
+import { RmqHelper } from 'src/helper/rmq.helper';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('owner')
 export class OwnerController {
   constructor(
     private readonly service: OwnerService,
-    @Inject('AUTH') private readonly authClient: ClientProxy,
+    private readonly prisma: PrismaService,
     @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
@@ -33,10 +42,28 @@ export class OwnerController {
     const createData = data.body;
     const response = await this.service.create(createData, data.params.user.id);
     if (response.success) {
-      this.authClient.emit({ cmd: 'owner_created' }, response.data);
-      this.transactionClient.emit({ cmd: 'owner_created' }, response.data);
+      RmqHelper.publishEvent('owner.created', response.data);
+      // this.transactionClient.emit({ cmd: 'owner_created' }, response.data);
     }
     return response;
+  }
+
+  @EventPattern('owner.created')
+  @Exempt()
+  async createReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        console.log('Captured Owner Create Event', data);
+        await this.service.createReplica(data);
+      },
+      {
+        queueName: 'owner.created',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.owner.created',
+        prisma: this.prisma,
+      },
+    )();
   }
 
   @MessagePattern({ cmd: 'put:owner/*' })
@@ -49,11 +76,29 @@ export class OwnerController {
     if (response.success) {
       //only if changing password emit to auth since auth only save the password and email
       if (body.password) {
-        this.authClient.emit({ cmd: 'owner_updated' }, response.data);
+        RmqHelper.publishEvent('owner.updated', response.data);
       }
-      this.transactionClient.emit({ cmd: 'owner_updated' }, response.data);
+      // this.transactionClient.emit({ cmd: 'owner_updated' }, response.data);
     }
     return response;
+  }
+
+  @EventPattern('owner.updated')
+  @Exempt()
+  async updateReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        console.log('Captured Owner Update Event', data);
+        await this.service.update(data.id, data);
+      },
+      {
+        queueName: 'owner.updated',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.owner.updated',
+        prisma: this.prisma,
+      },
+    )();
   }
 
   @MessagePattern({ cmd: 'delete:owner/*' })
@@ -63,9 +108,27 @@ export class OwnerController {
     const param = data.params;
     const response = await this.service.delete(param.id, param.user.id);
     if (response.success) {
-      this.authClient.emit({ cmd: 'owner_deleted' }, response.data.id);
-      this.transactionClient.emit({ cmd: 'owner_deleted' }, response.data.id);
+      RmqHelper.publishEvent('owner.deleted', response.data);
+      // this.transactionClient.emit({ cmd: 'owner_deleted' }, response.data.id);
     }
     return response;
+  }
+
+  @EventPattern('owner.deleted')
+  @Exempt()
+  async deleteReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        console.log('Captured Owner Delete Event', data);
+        await this.service.delete(data.id, data.user);
+      },
+      {
+        queueName: 'owner.deleted',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.owner.deleted',
+        prisma: this.prisma,
+      },
+    )();
   }
 }

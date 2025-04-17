@@ -2,6 +2,7 @@ import { Controller, Inject } from '@nestjs/common';
 import {
   ClientProxy,
   Ctx,
+  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
@@ -10,12 +11,14 @@ import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 import { EmployeeService } from './employee.service';
 import { Exempt } from 'src/decorator/exempt.decorator';
+import { RmqHelper } from 'src/helper/rmq.helper';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('employee')
 export class EmployeeController {
   constructor(
     private readonly service: EmployeeService,
-    @Inject('AUTH') private readonly authClient: ClientProxy,
+    private readonly prisma: PrismaService,
     @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
@@ -52,10 +55,29 @@ export class EmployeeController {
     const response = await this.service.create(createData, data.params.user.id);
     // broadcast to other services via RMQ
     if (response.success) {
-      this.authClient.emit({ cmd: 'employee_created' }, response.data);
-      this.transactionClient.emit({ cmd: 'employee_created' }, response.data);
+      RmqHelper.publishEvent('employee.created', response.data);
+      // this.transactionClient.emit({ cmd: 'employee_created' }, response.data);
     }
     return response;
+  }
+
+  // Captured Event employee created
+  @EventPattern('employee.created')
+  @Exempt()
+  async createReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        console.log('Captured Employee Create Event', data);
+        await this.service.createReplica(data);
+      },
+      {
+        queueName: 'employee.created',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.employee.created',
+        prisma: this.prisma,
+      },
+    )();
   }
 
   @MessagePattern({ cmd: 'put:employee/*' })
@@ -69,10 +91,28 @@ export class EmployeeController {
       data.params.user.id,
     );
     if (response.success && body.password) {
-      this.authClient.emit({ cmd: 'employee_updated' }, response.data);
+      RmqHelper.publishEvent('employee.updated', response.data);
       this.transactionClient.emit({ cmd: 'employee_updated' }, response.data);
     }
     return response;
+  }
+
+  @EventPattern('employee.updated')
+  @Exempt()
+  async updateReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Captured Employee Update Event', data);
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        return await this.service.update(data.id, data);
+      },
+      {
+        queueName: 'employee.updated',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.employee.updated',
+        prisma: this.prisma,
+      },
+    )();
   }
 
   @MessagePattern({ cmd: 'delete:employee/*' })
@@ -81,7 +121,7 @@ export class EmployeeController {
     const param = data.params;
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
-      this.authClient.emit({ cmd: 'employee_deleted' }, response.data.id);
+      RmqHelper.publishEvent('employee.deleted', response.data.id);
       this.transactionClient.emit(
         { cmd: 'employee_deleted' },
         response.data.id,
@@ -90,7 +130,25 @@ export class EmployeeController {
     return response;
   }
 
-  @MessagePattern({ cmd: 'password_changed' })
+  @EventPattern('employee.deleted')
+  @Exempt()
+  async deleteReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Captured Employee Delete Event', data);
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        return await this.service.delete(data);
+      },
+      {
+        queueName: 'employee.deleted',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.employee.deleted',
+        prisma: this.prisma,
+      },
+    )();
+  }
+
+  @EventPattern('password.changed')
   @Exempt()
   async passwordChanged(@Payload() data: any, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
