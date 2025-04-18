@@ -31,4 +31,8 @@ export class CompanyService extends BaseService {
     data.code = data.code.toUpperCase();
     return super.create(data, user_id);
   }
+  async findAllEmails(company_id): Promise<CustomResponse> {
+    const data = await this.companyRepository.findAllEmails(company_id);
+    return CustomResponse.success('Get all company emails success', data);
+  }
 }

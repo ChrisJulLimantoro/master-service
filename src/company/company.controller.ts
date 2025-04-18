@@ -3,6 +3,7 @@ import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 import { CompanyService } from './company.service';
+import { Exempt } from 'src/decorator/exempt.decorator';
 
 @Controller('company')
 export class CompanyController {
@@ -118,5 +119,11 @@ export class CompanyController {
       this.financeClient.emit({ cmd: 'company_deleted' }, response.data.id);
     }
     return response;
+  }
+
+  @MessagePattern({ cmd: 'get:company-emails' })
+  @Exempt()
+  async findAllEmails(@Payload() data: any): Promise<CustomResponse | null> {
+    return this.service.findAllEmails(data.body.auth.company_id);
   }
 }
