@@ -40,7 +40,13 @@ export class OwnerController {
   // @Describe('Create a new owner')
   async create(@Payload() data: any): Promise<CustomResponse> {
     const createData = data.body;
-    const response = await this.service.create(createData, data.params.user.id);
+    let response = null;
+    if (data.params) {
+      response = await this.service.create(createData, data.params.user.id);
+    } else {
+      response = await this.service.create(createData);
+    }
+
     if (response.success) {
       RmqHelper.publishEvent('owner.created', response.data);
       // this.transactionClient.emit({ cmd: 'owner_created' }, response.data);
