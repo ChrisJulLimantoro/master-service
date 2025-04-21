@@ -47,7 +47,10 @@ export class OwnerController {
     }
 
     if (response.success) {
-      RmqHelper.publishEvent('owner.created', response.data);
+      RmqHelper.publishEvent('owner.created', {
+        data: response.data,
+        user: data.params?.user?.id,
+      });
     }
     return response;
   }
@@ -59,7 +62,7 @@ export class OwnerController {
       context,
       async () => {
         console.log('Captured Owner Create Event', data);
-        await this.service.createReplica(data);
+        await this.service.createReplica(data.data);
       },
       {
         queueName: 'owner.created',
@@ -80,7 +83,10 @@ export class OwnerController {
     if (response.success) {
       //only if changing password emit to auth since auth only save the password and email
       if (body.password) {
-        RmqHelper.publishEvent('owner.updated', response.data);
+        RmqHelper.publishEvent('owner.updated', {
+          data: response.data,
+          user: param.user.id,
+        });
       }
     }
     return response;
@@ -93,7 +99,7 @@ export class OwnerController {
       context,
       async () => {
         console.log('Captured Owner Update Event', data);
-        await this.service.update(data.id, data);
+        await this.service.update(data.data.id, data.data, data.user);
       },
       {
         queueName: 'owner.updated',
@@ -111,7 +117,7 @@ export class OwnerController {
     const param = data.params;
     const response = await this.service.delete(param.id, param.user.id);
     if (response.success) {
-      RmqHelper.publishEvent('owner.deleted', response.data);
+      RmqHelper.publishEvent('owner.deleted', { data: response.data });
     }
     return response;
   }
@@ -123,7 +129,7 @@ export class OwnerController {
       context,
       async () => {
         console.log('Captured Owner Delete Event', data);
-        await this.service.delete(data.id, data.user);
+        await this.service.delete(data.data.id, data.data.user);
       },
       {
         queueName: 'owner.deleted',

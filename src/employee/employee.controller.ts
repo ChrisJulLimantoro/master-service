@@ -54,7 +54,10 @@ export class EmployeeController {
     const response = await this.service.create(createData, data.params.user.id);
     // broadcast to other services via RMQ
     if (response.success) {
-      RmqHelper.publishEvent('employee.created', response.data);
+      RmqHelper.publishEvent('employee.created', {
+        data: response.data,
+        user: data.params.user.id,
+      });
     }
     return response;
   }
@@ -67,7 +70,7 @@ export class EmployeeController {
       context,
       async () => {
         console.log('Captured Employee Create Event', data);
-        await this.service.createReplica(data);
+        await this.service.createReplica(data.data, data.user);
       },
       {
         queueName: 'employee.created',
@@ -89,7 +92,10 @@ export class EmployeeController {
       data.params.user.id,
     );
     if (response.success && body.password) {
-      RmqHelper.publishEvent('employee.updated', response.data);
+      RmqHelper.publishEvent('employee.updated', {
+        data: response.data,
+        user: data.params.user.id,
+      });
     }
     return response;
   }
@@ -101,7 +107,7 @@ export class EmployeeController {
     await RmqHelper.handleMessageProcessing(
       context,
       async () => {
-        return await this.service.update(data.id, data);
+        return await this.service.update(data.data.id, data.data, data.user);
       },
       {
         queueName: 'employee.updated',
@@ -118,7 +124,10 @@ export class EmployeeController {
     const param = data.params;
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
-      RmqHelper.publishEvent('employee.deleted', response.data.id);
+      RmqHelper.publishEvent('employee.deleted', {
+        data: response.data.id,
+        user: data.params.user.id,
+      });
     }
     return response;
   }

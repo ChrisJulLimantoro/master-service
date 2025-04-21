@@ -104,7 +104,7 @@ export class StoreController {
       context,
       async () => {
         console.log('Captured Store Create Event', data);
-        await this.service.createReplica(data);
+        await this.service.createReplica(data.data, data.user);
       },
       {
         queueName: 'store.created',
@@ -128,7 +128,10 @@ export class StoreController {
     );
     if (response.success) {
       if (body.code || body.name) {
-        RmqHelper.publishEvent('store.updated', response.data);
+        RmqHelper.publishEvent('store.updated', {
+          data: response.data,
+          user: data.params.user.id,
+        });
       }
     }
     return response;
@@ -141,7 +144,7 @@ export class StoreController {
     await RmqHelper.handleMessageProcessing(
       context,
       async () => {
-        return await this.service.update(data.id, data);
+        return await this.service.update(data.data.id, data.data, data.user);
       },
       {
         queueName: 'store.updated',
@@ -159,7 +162,10 @@ export class StoreController {
 
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
-      RmqHelper.publishEvent('store.deleted', response.data.id);
+      RmqHelper.publishEvent('store.deleted', {
+        data: response.data.id,
+        user: param.user.id,
+      });
     }
     return response;
   }
