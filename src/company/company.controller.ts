@@ -1,18 +1,24 @@
 import { Controller, Inject } from '@nestjs/common';
-import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  Ctx,
+  EventPattern,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { Describe } from 'src/decorator/describe.decorator';
 import { CustomResponse } from 'src/exception/dto/custom-response.dto';
 import { CompanyService } from './company.service';
+import { RmqHelper } from 'src/helper/rmq.helper';
 import { Exempt } from 'src/decorator/exempt.decorator';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('company')
 export class CompanyController {
   constructor(
     private readonly service: CompanyService,
-    @Inject('AUTH') private readonly authClient: ClientProxy,
-    @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
-    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
-    @Inject('FINANCE') private readonly financeClient: ClientProxy,
+    private readonly prisma: PrismaService,
   ) {}
 
   @MessagePattern({ cmd: 'get:company' })
@@ -80,12 +86,31 @@ export class CompanyController {
     const response = await this.service.create(createData, data.params.user.id);
     // broadcast to other services via RMQ
     if (response.success) {
-      this.authClient.emit({ cmd: 'company_created' }, response.data);
-      this.inventoryClient.emit({ cmd: 'company_created' }, response.data);
-      this.transactionClient.emit({ cmd: 'company_created' }, response.data);
-      this.financeClient.emit({ cmd: 'company_created' }, response.data);
+      RmqHelper.publishEvent('company.created', {
+        data: response.data,
+        user: data.params.user.id,
+      });
     }
     return response;
+  }
+
+  // Captured Event company created
+  @EventPattern('company.created')
+  @Exempt()
+  async createReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        console.log('Captured Company Create Event', data);
+        await this.service.createReplica(data.data, data.user);
+      },
+      {
+        queueName: 'company.created',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.company.created',
+        prisma: this.prisma,
+      },
+    )();
   }
 
   @MessagePattern({ cmd: 'put:company/*' })
@@ -99,12 +124,30 @@ export class CompanyController {
       data.params.user.id,
     );
     if (response.success) {
-      this.authClient.emit({ cmd: 'company_updated' }, response.data);
-      this.inventoryClient.emit({ cmd: 'company_updated' }, response.data);
-      this.transactionClient.emit({ cmd: 'company_updated' }, response.data);
-      this.financeClient.emit({ cmd: 'company_updated' }, response.data);
+      RmqHelper.publishEvent('company.updated', {
+        data: response.data,
+        user: param.user.id,
+      });
     }
     return response;
+  }
+
+  @EventPattern('company.updated')
+  @Exempt()
+  async updateReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Captured Company Update Event', data);
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        return await this.service.update(data.data.id, data.data, data.user);
+      },
+      {
+        queueName: 'company.updated',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.company.updated',
+        prisma: this.prisma,
+      },
+    )();
   }
 
   @MessagePattern({ cmd: 'delete:company/*' })
@@ -113,10 +156,10 @@ export class CompanyController {
     const param = data.params;
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
-      this.authClient.emit({ cmd: 'company_deleted' }, response.data.id);
-      this.inventoryClient.emit({ cmd: 'company_deleted' }, response.data.id);
-      this.transactionClient.emit({ cmd: 'company_deleted' }, response.data.id);
-      this.financeClient.emit({ cmd: 'company_deleted' }, response.data.id);
+      RmqHelper.publishEvent('company.deleted', {
+        data: response.data.id,
+        user: param.user.id,
+      });
     }
     return response;
   }
@@ -125,5 +168,23 @@ export class CompanyController {
   @Exempt()
   async findAllEmails(@Payload() data: any): Promise<CustomResponse | null> {
     return this.service.findAllEmails(data.body.auth.company_id);
+  }
+
+  @EventPattern('company.deleted')
+  @Exempt()
+  async deleteReplica(@Payload() data: any, @Ctx() context: RmqContext) {
+    console.log('Captured Company Delete Event', data);
+    await RmqHelper.handleMessageProcessing(
+      context,
+      async () => {
+        return await this.service.delete(data.data, data.user);
+      },
+      {
+        queueName: 'company.deleted',
+        useDLQ: true,
+        dlqRoutingKey: 'dlq.company.deleted',
+        prisma: this.prisma,
+      },
+    )();
   }
 }
