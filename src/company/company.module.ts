@@ -4,10 +4,9 @@ import { CompanyService } from './company.service';
 import { CompanyRepository } from 'src/repositories/company.repository';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ValidationModule } from 'src/validation/validation.module';
-import { SharedModule } from 'src/shared.module';
 
 @Module({
-  imports: [SharedModule],
+  imports: [],
   controllers: [CompanyController],
   providers: [
     CompanyService,

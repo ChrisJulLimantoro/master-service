@@ -19,7 +19,6 @@ export class OwnerController {
   constructor(
     private readonly service: OwnerService,
     private readonly prisma: PrismaService,
-    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:owner' })
@@ -43,7 +42,6 @@ export class OwnerController {
     const response = await this.service.create(createData, data.params.user.id);
     if (response.success) {
       RmqHelper.publishEvent('owner.created', response.data);
-      // this.transactionClient.emit({ cmd: 'owner_created' }, response.data);
     }
     return response;
   }
@@ -78,7 +76,6 @@ export class OwnerController {
       if (body.password) {
         RmqHelper.publishEvent('owner.updated', response.data);
       }
-      // this.transactionClient.emit({ cmd: 'owner_updated' }, response.data);
     }
     return response;
   }
@@ -109,7 +106,6 @@ export class OwnerController {
     const response = await this.service.delete(param.id, param.user.id);
     if (response.success) {
       RmqHelper.publishEvent('owner.deleted', response.data);
-      // this.transactionClient.emit({ cmd: 'owner_deleted' }, response.data.id);
     }
     return response;
   }

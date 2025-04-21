@@ -19,10 +19,6 @@ export class StoreController {
   constructor(
     private readonly service: StoreService,
     private readonly prisma: PrismaService,
-    @Inject('MARKETPLACE') private readonly marketplaceClient: ClientProxy,
-    @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
-    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
-    @Inject('FINANCE') private readonly financeClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:store' })
@@ -97,17 +93,6 @@ export class StoreController {
     if (response.success) {
       // broadcast to other services via RMQ
       RmqHelper.publishEvent('store.created', response.data);
-      this.inventoryClient.emit({ cmd: 'store_created' }, response.data);
-      this.transactionClient.emit({ cmd: 'store_created' }, response.data);
-      this.financeClient.emit({ cmd: 'store_created' }, response.data);
-      this.marketplaceClient.emit(
-        {
-          service: 'marketplace',
-          module: 'store',
-          action: 'create',
-        },
-        response.data,
-      );
     }
     return response;
   }
@@ -144,17 +129,6 @@ export class StoreController {
     if (response.success) {
       if (body.code || body.name) {
         RmqHelper.publishEvent('store.updated', response.data);
-        this.inventoryClient.emit({ cmd: 'store_updated' }, response.data);
-        this.transactionClient.emit({ cmd: 'store_updated' }, response.data);
-        this.financeClient.emit({ cmd: 'store_updated' }, response.data);
-        this.marketplaceClient.emit(
-          {
-            service: 'marketplace',
-            module: 'store',
-            action: 'update',
-          },
-          response.data,
-        );
       }
     }
     return response;
@@ -186,13 +160,6 @@ export class StoreController {
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
       RmqHelper.publishEvent('store.deleted', response.data.id);
-      this.inventoryClient.emit({ cmd: 'store_deleted' }, response.data.id);
-      this.transactionClient.emit({ cmd: 'store_deleted' }, response.data.id);
-      this.financeClient.emit({ cmd: 'store_deleted' }, response.data);
-      this.marketplaceClient.emit(
-        { service: 'marketplace', module: 'store', action: 'delete' },
-        { id: response.data.id },
-      );
     }
     return response;
   }

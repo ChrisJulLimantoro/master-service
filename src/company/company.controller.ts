@@ -19,9 +19,6 @@ export class CompanyController {
   constructor(
     private readonly service: CompanyService,
     private readonly prisma: PrismaService,
-    @Inject('INVENTORY') private readonly inventoryClient: ClientProxy,
-    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
-    @Inject('FINANCE') private readonly financeClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:company' })
@@ -93,9 +90,6 @@ export class CompanyController {
         data: response.data,
         user: data.params.user.id,
       });
-      this.inventoryClient.emit({ cmd: 'company_created' }, response.data);
-      this.transactionClient.emit({ cmd: 'company_created' }, response.data);
-      this.financeClient.emit({ cmd: 'company_created' }, response.data);
     }
     return response;
   }
@@ -134,9 +128,6 @@ export class CompanyController {
         data: response.data,
         user: param.user.id,
       });
-      this.inventoryClient.emit({ cmd: 'company_updated' }, response.data);
-      this.transactionClient.emit({ cmd: 'company_updated' }, response.data);
-      this.financeClient.emit({ cmd: 'company_updated' }, response.data);
     }
     return response;
   }
@@ -169,9 +160,6 @@ export class CompanyController {
         data: response.data.id,
         user: param.user.id,
       });
-      this.inventoryClient.emit({ cmd: 'company_deleted' }, response.data.id);
-      this.transactionClient.emit({ cmd: 'company_deleted' }, response.data.id);
-      this.financeClient.emit({ cmd: 'company_deleted' }, response.data.id);
     }
     return response;
   }

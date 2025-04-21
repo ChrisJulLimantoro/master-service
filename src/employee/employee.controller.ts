@@ -19,7 +19,6 @@ export class EmployeeController {
   constructor(
     private readonly service: EmployeeService,
     private readonly prisma: PrismaService,
-    @Inject('TRANSACTION') private readonly transactionClient: ClientProxy,
   ) {}
 
   @MessagePattern({ cmd: 'get:employee' })
@@ -56,7 +55,6 @@ export class EmployeeController {
     // broadcast to other services via RMQ
     if (response.success) {
       RmqHelper.publishEvent('employee.created', response.data);
-      // this.transactionClient.emit({ cmd: 'employee_created' }, response.data);
     }
     return response;
   }
@@ -92,7 +90,6 @@ export class EmployeeController {
     );
     if (response.success && body.password) {
       RmqHelper.publishEvent('employee.updated', response.data);
-      this.transactionClient.emit({ cmd: 'employee_updated' }, response.data);
     }
     return response;
   }
@@ -122,10 +119,6 @@ export class EmployeeController {
     const response = await this.service.delete(param.id, data.params.user.id);
     if (response.success) {
       RmqHelper.publishEvent('employee.deleted', response.data.id);
-      this.transactionClient.emit(
-        { cmd: 'employee_deleted' },
-        response.data.id,
-      );
     }
     return response;
   }
