@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class RmqHelper {
   private static readonly MAX_RETRIES = 3;
   private static readonly QUEUE_NAME =
-    process.env.RMQ_QUEUE_NAME || 'auth_service_queue_1';
+    process.env.RMQ_QUEUE_NAME || 'master_service_queue_1';
 
   static handleMessageProcessing(
     context: RmqContext,
