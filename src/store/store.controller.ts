@@ -92,7 +92,10 @@ export class StoreController {
 
     if (response.success) {
       // broadcast to other services via RMQ
-      RmqHelper.publishEvent('store.created', response.data);
+      RmqHelper.publishEvent('store.created', {
+        data: response.data,
+        user: data.params.user.id,
+      });
     }
     return response;
   }
