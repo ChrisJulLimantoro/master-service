@@ -164,6 +164,12 @@ export class CompanyController {
     return response;
   }
 
+  @MessagePattern({ cmd: 'get:company-emails' })
+  @Exempt()
+  async findAllEmails(@Payload() data: any): Promise<CustomResponse | null> {
+    return this.service.findAllEmails(data.body.auth.company_id);
+  }
+
   @EventPattern('company.deleted')
   @Exempt()
   async deleteReplica(@Payload() data: any, @Ctx() context: RmqContext) {
