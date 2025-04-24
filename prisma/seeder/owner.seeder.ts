@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { RmqHelper } from 'src/helper/rmq.helper';
+import { RmqHelper } from '../../src/helper/rmq.helper';
 
 const prisma = new PrismaClient();
 
