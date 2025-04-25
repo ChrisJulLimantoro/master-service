@@ -11,7 +11,7 @@ async function bootstrap() {
       transport: Transport.TCP,
       options: {
         host: process.env.TCP_HOST || 'localhost',
-        port: Number(process.env.TCP_PORT) || 3001,
+        port: Number(process.env.TCP_PORT) || 3002,
       }, // Unique port for this TCP service
     },
   );
