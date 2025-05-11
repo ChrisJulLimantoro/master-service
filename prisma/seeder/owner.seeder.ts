@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Dynamically determine the path for the helper
 const { RmqHelper } = isProduction
   ? require('../dist/src/helper/rmq.helper')
-  : require('../src/helper/rmq.helper');
+  : require('../../src/helper/rmq.helper');
 
 const prisma = new PrismaClient();
 
