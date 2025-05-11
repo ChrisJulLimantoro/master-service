@@ -1,13 +1,34 @@
 import { PrismaClient } from '@prisma/client';
+import * as amqp from 'amqplib';
 import * as bcrypt from 'bcrypt';
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Dynamically determine the path for the helper
-const { RmqHelper } = isProduction
-  ? require('../dist/src/helper/rmq.helper')
-  : require('../../src/helper/rmq.helper');
 
 const prisma = new PrismaClient();
+
+async function publishEvent(cmd: string, payload: any) {
+  const conn = await amqp.connect(
+    process.env.RMQ_URL || 'amqp://localhost:5672',
+  );
+  const ch = await conn.createChannel();
+
+  const exchange = process.env.RMQ_EXCHANGE || 'events_broadcast';
+  const routingKey = cmd; // already formatted like 'product.created'
+
+  const message = {
+    pattern: cmd,
+    data: payload,
+  };
+
+  await ch.assertExchange(exchange, 'topic', { durable: true });
+  ch.publish(exchange, routingKey, Buffer.from(JSON.stringify(message)), {
+    headers: {
+      'x-retry-count': 0,
+      'origin-queue': this.QUEUE_NAME,
+    },
+  });
+
+  await ch.close();
+  await conn.close();
+}
 
 async function main() {
   // Create default companies
@@ -29,7 +50,7 @@ async function main() {
   });
 
   // Send this to RabbitMQ for the other services to consume
-  RmqHelper.publishEvent('owner.created', {
+  publishEvent('owner.created', {
     data: user1,
     user: user1.id,
   });
