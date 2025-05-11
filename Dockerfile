@@ -1,5 +1,5 @@
 # Stage 1 - Build Stage
-FROM node:23-alpine3.16 AS builder
+FROM node:23-slim AS builder
 
 # Install build dependencies
 WORKDIR /app
@@ -17,7 +17,7 @@ RUN npm run build
 
 
 # Stage 2 - Production Stage
-FROM node:23-alpine3.16
+FROM node:23-slim
 
 # Set working directory
 WORKDIR /app
