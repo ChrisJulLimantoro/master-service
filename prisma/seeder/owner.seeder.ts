@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { RmqHelper } from '../../src/helper/rmq.helper';
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Dynamically determine the path for the helper
+const { RmqHelper } = isProduction
+  ? require('../dist/src/helper/rmq.helper')
+  : require('../src/helper/rmq.helper');
 
 const prisma = new PrismaClient();
 
