@@ -22,10 +22,6 @@ FROM node:23-alpine3.16
 # Set working directory
 WORKDIR /app
 
-
-# For prisma to work with Alpine, we need to install the compatibility layer for OpenSSL
-RUN apk add --update --no-cache openssl1.1-compat
-
 # Copy only the built app and necessary files
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
