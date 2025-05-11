@@ -22,7 +22,7 @@ async function publishEvent(cmd: string, payload: any) {
   ch.publish(exchange, routingKey, Buffer.from(JSON.stringify(message)), {
     headers: {
       'x-retry-count': 0,
-      'origin-queue': this.QUEUE_NAME,
+      'origin-queue': 'master_service_queue_1',
     },
   });
 
