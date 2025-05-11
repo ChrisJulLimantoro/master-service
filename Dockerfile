@@ -1,5 +1,5 @@
 # Stage 1 - Build Stage
-FROM node:23-alpine AS builder
+FROM node:23-alpine3.16 AS builder
 
 # Install build dependencies
 WORKDIR /app
@@ -17,14 +17,14 @@ RUN npm run build
 
 
 # Stage 2 - Production Stage
-FROM node:23-alpine
+FROM node:23-alpine3.16
 
 # Set working directory
 WORKDIR /app
 
 
 # For prisma to work with Alpine, we need to install the compatibility layer for OpenSSL
-RUN apk add --no-cache openssl1.1-compat
+RUN apk add --update --no-cache openssl1.1-compat
 
 # Copy only the built app and necessary files
 COPY --from=builder /app/dist ./dist
