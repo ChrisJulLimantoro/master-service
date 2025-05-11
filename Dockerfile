@@ -9,9 +9,8 @@ RUN npm install
 # Copy source code and Prisma files
 COPY . .
 
-# Generate Prisma Client and Run Seeder
+# Generate Prisma Client
 RUN npx prisma generate
-RUN npx ts-node prisma/seeder/*.ts
 
 # Build the NestJS application
 RUN npm run build
@@ -30,3 +29,10 @@ COPY --from=builder /app/prisma ./prisma
 
 # Install only production dependencies
 RUN npm install --production
+
+# Install ts-node for running TypeScript seeders
+RUN npm install ts-node --save-dev
+
+# Copy Prisma Client
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
