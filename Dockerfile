@@ -33,6 +33,7 @@ RUN npm install --production
 # Install ts-node for running TypeScript seeders
 RUN npm install ts-node --save-dev
 RUN npm install --save-dev @types/bcrypt
+RUN npm install --save-dev @types/amqplib
 
 # Copy Prisma Client
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
