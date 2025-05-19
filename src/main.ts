@@ -13,13 +13,13 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: process.env.TCP_HOST || 'localhost',
-      port: Number(process.env.TCP_PORT ?? '3001'),
+      port: Number(process.env.TCP_PORT ?? '3002'),
     },
   };
   const tcpService = app.connectMicroservice(tcpOptions);
 
   // RabbitMQ Microservice
-  const queueName = process.env.RMQ_QUEUE_NAME || 'auth_service_queue_1';
+  const queueName = process.env.RMQ_QUEUE_NAME || 'master_service_queue_1';
   const rmqOptions: MicroserviceOptions = {
     transport: Transport.RMQ,
     options: {
