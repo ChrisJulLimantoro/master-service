@@ -1,5 +1,6 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -32,7 +33,7 @@ export class BaseRepository<T> {
         return created;
       }); // Only returns count, not inserted data
     } catch (error) {
-      throw new Error(`Bulk insert failed: ${error.message}`);
+      throw new RpcException(`Bulk insert failed: ${error.message}`);
     }
   }
 
@@ -183,7 +184,7 @@ export class BaseRepository<T> {
     user_id?: string,
   ): Promise<number> {
     if (filter.length === 0) {
-      throw new Error('Filter cannot be empty');
+      throw new RpcException('Filter cannot be empty');
     }
     if (this.isSoftDelete) {
       filter.deleted_at = null;
@@ -225,7 +226,7 @@ export class BaseRepository<T> {
     const model = Prisma.dmmf.datamodel.models.find(
       (m) => m.name.toLowerCase() === this.modelName.toLowerCase(),
     );
-    if (!model) throw new Error(`Model ${this.modelName} not found`);
+    if (!model) throw new RpcException(`Model ${this.modelName} not found`);
 
     return model.fields.map((field) => ({
       name: field.name,

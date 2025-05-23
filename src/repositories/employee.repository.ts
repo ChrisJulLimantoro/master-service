@@ -1,6 +1,7 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { BaseRepository } from './base.repository';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class EmployeeRepository extends BaseRepository<any> {
@@ -13,11 +14,11 @@ export class EmployeeRepository extends BaseRepository<any> {
     try {
       const check = await this.checkUnique(data.email);
       if (!check) {
-        throw new Error('Email already exists');
+        throw new RpcException('Email already exists');
       }
       return super.create(data, user_id);
     } catch (error) {
-      throw new Error(`Create failed: ${error.message}`);
+      throw new RpcException(`Create failed: ${error.message}`);
     }
   }
 
@@ -25,7 +26,7 @@ export class EmployeeRepository extends BaseRepository<any> {
     try {
       return super.update(id, data, user_id);
     } catch (error) {
-      throw new Error(`Update failed: ${error.message}`);
+      throw new RpcException(`Update failed: ${error.message}`);
     }
   }
 
