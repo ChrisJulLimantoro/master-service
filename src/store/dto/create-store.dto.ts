@@ -22,6 +22,7 @@ export class CreateStoreRequest {
   fixed_tt_adjustment: number;
   percent_kbl_adjustment: number;
   fixed_kbl_adjustment: number;
+  inventory_val_method: number | null;
 
   constructor({
     code,
@@ -46,6 +47,7 @@ export class CreateStoreRequest {
     fixed_tt_adjustment = 0,
     percent_kbl_adjustment = 0,
     fixed_kbl_adjustment = 0,
+    inventory_val_method = 1,
   }) {
     this.code = code;
     this.name = name;
@@ -69,6 +71,7 @@ export class CreateStoreRequest {
     this.fixed_tt_adjustment = fixed_tt_adjustment;
     this.percent_kbl_adjustment = percent_kbl_adjustment;
     this.fixed_kbl_adjustment = fixed_kbl_adjustment;
+    this.inventory_val_method = inventory_val_method;
   }
 
   static schema() {
@@ -95,6 +98,7 @@ export class CreateStoreRequest {
       fixed_tt_adjustment: z.number().optional(),
       percent_kbl_adjustment: z.number().max(100).optional(),
       fixed_kbl_adjustment: z.number().optional(),
+      inventory_val_method: z.number().nullable().optional(),
     });
   }
 }

@@ -21,6 +21,7 @@ export class UpdateStoreRequest {
   fixed_tt_adjustment: number | null;
   percent_kbl_adjustment: number | null;
   fixed_kbl_adjustment: number | null;
+  inventory_val_method: number | null;
 
   constructor(data: {
     code: string | null;
@@ -44,6 +45,7 @@ export class UpdateStoreRequest {
     fixed_tt_adjustment: string | null;
     percent_kbl_adjustment: string | null;
     fixed_kbl_adjustment: string | null;
+    inventory_val_method: number | null;
   }) {
     this.code = data.code;
     this.name = data.name;
@@ -66,6 +68,7 @@ export class UpdateStoreRequest {
     this.fixed_tt_adjustment = parseFloat(data.fixed_tt_adjustment);
     this.percent_kbl_adjustment = parseFloat(data.percent_kbl_adjustment);
     this.fixed_kbl_adjustment = parseFloat(data.fixed_kbl_adjustment);
+    this.inventory_val_method = data.inventory_val_method;
   }
 
   static schema() {
@@ -91,6 +94,7 @@ export class UpdateStoreRequest {
       fixed_tt_adjustment: z.number().nullable().optional(),
       percent_kbl_adjustment: z.number().max(100).nullable().optional(),
       fixed_kbl_adjustment: z.number().nullable().optional(),
+      inventory_val_method: z.number().nullable().optional(),
     });
   }
 }
