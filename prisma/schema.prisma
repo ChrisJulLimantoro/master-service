@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
 }
 
 datasource db {
@@ -14,30 +15,119 @@ datasource db {
 }
 
 model Company {
-  id       String         @id @db.Uuid @default(uuid())
-  name     String
-  owner_id String @db.Uuid
+  id          String  @id @default(uuid()) @db.Uuid
+  code        String  @unique
+  name        String
+  description String? @db.Text
+  owner_id    String  @db.Uuid
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
+  owner  Owner   @relation(fields: [owner_id], references: [id])
   stores Store[]
-  @@unique([name, owner_id])
+
+  @@unique([code, owner_id])
   @@map("companies")
 }
 
 model Store {
-  id      String         @id @db.Uuid @default(uuid())
-  name     String
-  company_id String @db.Uuid
+  id             String   @id @default(uuid()) @db.Uuid
+  code           String
+  name           String
+  npwp           String
+  open_date      DateTime @db.Date
+  address        String   @db.Text
+  longitude      Decimal  @db.Decimal(65, 20)
+  latitude       Decimal  @db.Decimal(65, 20)
+  description    String?  @db.Text
+  is_active      Boolean  @default(true)
+  wa_number      String?
+  is_flex_price  Boolean  @default(false)
+  is_float_price Boolean  @default(false)
+  tax_percentage Decimal  @default(11) @db.Decimal // ppn jual / tax sales
+  tax_purchase   Decimal  @default(0) @db.Decimal // ppn beli emas
+  poin_config    Int      @default(0)
+  logo           String
+  grace_period   Int      @default(0) // Days
+  // TT (store > customer)
+  percent_tt_adjustment Decimal @default(0) @db.Decimal
+  fixed_tt_adjustment  Decimal @default(0) @db.Decimal
+  // KBL (store < customer)
+  percent_kbl_adjustment Decimal @default(0) @db.Decimal
+  fixed_kbl_adjustment  Decimal @default(0) @db.Decimal
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  company_id String @db.Uuid
+  
+  inventory_val_method Int @default(1) // 1: Average , 2 : Precise Value (Buy Price per Product Code)
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   company Company @relation(fields: [company_id], references: [id])
 
-  @@unique([name, company_id])
+  @@unique([code, company_id])
   @@map("stores")
+}
+
+model Owner {
+  id       String @id @default(uuid()) @db.Uuid
+  name     String
+  email    String
+  password String
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  companies Company[]
+  employees Employee[]
+
+  @@unique([email])
+  @@map("owners")
+}
+
+model Employee {
+  id       String @id @default(uuid()) @db.Uuid
+  name     String
+  email    String
+  password String
+  owner_id String @db.Uuid
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  owner Owner @relation(fields: [owner_id], references: [id])
+
+  @@unique([email])
+  @@map("employees")
+}
+
+// Model for storing failed RabbitMQ message
+model FailedMessage {
+  id         Int   @id @default(autoincrement())
+  queue      String
+  routingKey String
+  payload    Json
+  error      String
+  timestamp  DateTime @default(now())
+
+  @@map("failed_messages")
+}
+
+model ActionLog {
+  id          BigInt  @id @default(autoincrement())
+  user_id     String?  @db.Uuid
+  event       String
+  resource    String
+  resource_id String
+  diff        Json?
+  timestamp   DateTime @default(now())
+
+  @@map("action_logs")
+  @@index([user_id])
+  @@index([resource, resource_id])
 }

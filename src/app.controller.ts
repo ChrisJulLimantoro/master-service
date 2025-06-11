@@ -7,11 +7,10 @@ import { Exempt } from './decorator/exempt.decorator';
 @Controller('app')
 export class AppController {
   constructor(private readonly discovery: MessagePatternDiscoveryService) {}
-  @MessagePattern({ cmd: 'get_all_routes' })
+  @MessagePattern({ cmd: 'get_routes' })
   @Exempt()
   async getAllRoutes(): Promise<any> {
-    const patterns = await this.discovery.getMessagePatterns();
-    console.log(patterns);
+    const patterns = this.discovery.getMessagePatterns();
     return CustomResponse.success('Pattern Found!', patterns, 200);
   }
 }

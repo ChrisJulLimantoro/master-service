@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "stores" ADD COLUMN     "income_tax" DECIMAL NOT NULL DEFAULT 22,
+ADD COLUMN     "tax_purchase" DECIMAL NOT NULL DEFAULT 11;
