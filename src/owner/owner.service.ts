@@ -46,7 +46,9 @@ export class OwnerService extends BaseService {
     console.log(process.env.EMAIL); // Untuk debugging
 
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL,
         pass: process.env.PASS,
@@ -55,6 +57,7 @@ export class OwnerService extends BaseService {
 
     // Mengirimkan email dengan password baru
     await transporter.sendMail({
+      from: 'Logamas <logamas.dev@gmail.com>',
       to: email,
       subject: 'Your Account Details',
       html: `
