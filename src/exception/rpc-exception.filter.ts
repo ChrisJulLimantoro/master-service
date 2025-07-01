@@ -30,7 +30,7 @@ export class RPCExceptionFilter implements ExceptionFilter {
     if (exception instanceof PrismaClientKnownRequestError) {
       const formattedErrors = this.formatPrismaError(exception);
       const errorResponse = {
-        statusCode: 400,
+        statusCode: 409,
         message: formattedErrors[0].message,
         errors: formattedErrors,
       };
